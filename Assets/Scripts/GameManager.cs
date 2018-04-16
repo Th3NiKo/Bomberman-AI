@@ -51,14 +51,19 @@ public class GameManager : MonoBehaviour {
 	public GameObject Player2;
 	public GameObject Player3;
 
+	public GameObject explosionObject;
+	public Material dmg;
+
 
 
 	//Variables
 	public int rowsCount;
 	public int columnsCount;
+
+	public int howMany = 15;
 	private int[,] map;
 	private float turnTimer = 0.0f;
-	private float turnTime = 1f;
+	private float turnTime = 0.5f;
 
 	//Guards
 	private bool oneMoved = false;
@@ -67,9 +72,15 @@ public class GameManager : MonoBehaviour {
 	private int twoBomb = 0;
 	private bool threeMoved = false;
 	private int threeBomb = 0;
+
+	//Lifes
+	private int oneHealth = 3;
+	private int twoHealth = 3;
+	private int threeHealth = 3;
+
 	void Start () {
 		map = new int [rowsCount, columnsCount];
-		createMap(9);
+		createMap(howMany);
 		renderMap();
 	}
 	
@@ -167,7 +178,7 @@ public class GameManager : MonoBehaviour {
 	void renderMap(){
 		
 		//We need to start from some points of the map and draw every element
-		Debug.Log(oneBomb);
+		//Debug.Log(oneBomb);
 		float startX = 0.0f;
 		float startY = 0.0f;
 		for(int i = 0; i < rowsCount; i++){
@@ -188,35 +199,79 @@ public class GameManager : MonoBehaviour {
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 20:
-						Instantiate(Player2,new Vector3(startX, 1f, startY), Quaternion.identity);						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
+						Instantiate(Player2,new Vector3(startX, 1f, startY), Quaternion.identity);						
+						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 30:
 						Instantiate(Player3,new Vector3(startX, 1f, startY), Quaternion.identity);
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 4:
-						Instantiate(bombObject,new Vector3(startX, 1f, startY), Quaternion.identity);
+						GameObject tempBomb;
+						tempBomb = Instantiate(bombObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
-						
+						tempBomb.transform.localScale = new Vector3(tempBomb.transform.localScale.x + 0.0f, tempBomb.transform.localScale.y + 0.0f, tempBomb.transform.localScale.z + 0.0f);
 						map[i,j] = 3;
 					break;
 					case 3:
-						Instantiate(bombObject,new Vector3(startX, 1.5f, startY), Quaternion.identity);
+						tempBomb = Instantiate(bombObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
+						tempBomb.transform.localScale = new Vector3(tempBomb.transform.localScale.x + 0.1f, tempBomb.transform.localScale.y + 0.1f, tempBomb.transform.localScale.z + 0.1f);
 
 						map[i,j] = 2;
 					break;
 					case 2:
-						Instantiate(bombObject,new Vector3(startX, 2f, startY), Quaternion.identity);
+						tempBomb = Instantiate(bombObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
+						tempBomb.transform.localScale = new Vector3(tempBomb.transform.localScale.x + 0.2f, tempBomb.transform.localScale.y + 0.2f, tempBomb.transform.localScale.z + 0.2f);
 
 						map[i,j] = 1;
 					break;
 					case 1:
-						//Blowing will be here
+						//Blowing terrain
+						
+						if(map[i-1,j] == 0 || map[i-1,j] == 8){
+							Instantiate(explosionObject,new Vector3(startX - 1f, 1f, startY), Quaternion.identity);
+							map[i-1,j] = 0;
+						} if (map[i+1,j] == 0 || map[i+1,j] == 8){
+							Instantiate(explosionObject,new Vector3(startX + 1f, 1f, startY), Quaternion.identity);
+							map[i+1,j] = 0;
+						} if (map[i,j-1] == 0 || map[i,j-1] == 8){
+							Instantiate(explosionObject,new Vector3(startX, 1f, startY -1f), Quaternion.identity);
+							map[i,j-1] = 0;
+						} if (map[i,j+1] == 0 || map[i,j+1] == 8){
+							Instantiate(explosionObject,new Vector3(startX, 1f, startY +1f), Quaternion.identity);
+							map[i,j+1] = 0;
+						} 
+						Instantiate(explosionObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 
 						map[i,j] = 0;
+
+
+
+						//Now blowing players
+						if(map[i-1,j] == 10 || map[i-1,j] == 20 ||  map[i-1,j] == 30){
+							//Color red for one second
+							StartCoroutine(changeColor(map[i-1,j]));
+							//Take health down
+							takeHealthDown(map[i-1,j]);
+						}if(map[i+1,j] == 10 || map[i+1,j] == 20 ||  map[i+1,j] == 30){
+							//Color red for one second
+							StartCoroutine(changeColor(map[i+1,j]));
+							//Take health down
+							takeHealthDown(map[i+1,j]);
+						}if(map[i,j-1] == 10 || map[i,j-1] == 20 ||  map[i,j-1] == 30){
+							//Color red for one second
+							StartCoroutine(changeColor(map[i,j-1]));
+							//Take health down
+							takeHealthDown(map[i,j-1]);
+						} if(map[i,j+1] == 10 || map[i,j+1] == 20 ||  map[i,j+1] == 30){
+							//Color red for one second
+							StartCoroutine(changeColor(map[i,j+1]));
+							//Take health down
+							takeHealthDown(map[i,j+1]);
+						}
 					break;
 
 						
@@ -247,7 +302,7 @@ public class GameManager : MonoBehaviour {
 	public void MoveUp(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i,j + 1] == 0 || map[i,j + 1] >= 10)){
+				if((map[i,j] == playerIndex) && (map[i,j + 1] == 0)){
 					if(canMove(playerIndex)){
 						map[i,j + 1] = playerIndex;
 						playerMoved(playerIndex);
@@ -269,7 +324,7 @@ public class GameManager : MonoBehaviour {
 	public void MoveDown(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i,j - 1] == 0 || map[i,j + 1] >= 10)){
+				if((map[i,j] == playerIndex) && (map[i,j - 1] == 0)){
 					if(canMove(playerIndex)){
 						map[i,j - 1] = playerIndex;
 						if(shouldCreateBomb(playerIndex)){ //Bomb is on state 5 so we need to create it 
@@ -287,9 +342,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void MoveLeft(int playerIndex){
-		for(int i = 0; i < rowsCount; i++){
-			for(int j = 0; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i - 1,j] == 0 || map[i,j + 1] >= 10)){
+		for(int i = 1; i < rowsCount; i++){
+			for(int j = 1; j < columnsCount; j++){
+				if((map[i,j] == playerIndex) && (map[i - 1,j] == 0)){
 					if(canMove(playerIndex)){
 						map[i - 1,j] = playerIndex;
 						if(shouldCreateBomb(playerIndex)){ //Bomb is on state 5 so we need to create it 
@@ -309,7 +364,7 @@ public class GameManager : MonoBehaviour {
 	public void MoveRight(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i + 1,j] == 0 || map[i,j + 1] >= 10)){
+				if((map[i,j] == playerIndex) && (map[i + 1,j] == 0)){
 					if(canMove(playerIndex)){
 						map[i + 1,j] = playerIndex;
 						playerMoved(playerIndex);
@@ -434,4 +489,31 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	private void takeHealthDown(int playerIndex){
+		if(playerIndex == 10){
+			oneHealth--;
+		} else if(playerIndex == 20){
+			twoHealth--;
+		} else if(playerIndex == 30){
+			threeHealth--;
+		}
+	}
+
+	private IEnumerator changeColor(int playerIndex){
+		GameObject temp;
+		 if(playerIndex == 10){
+			temp = Player1;
+		 } else if(playerIndex == 20){
+			temp = Player2;
+		 } else if(playerIndex == 30){
+			temp = Player3;
+		 } else {
+			 temp = Player1;
+		 }
+		 Material tempColor = temp.GetComponent<MeshRenderer>().sharedMaterial;
+		 temp.GetComponent<MeshRenderer>().sharedMaterial = dmg;
+		 yield return new WaitForSeconds(.1f);
+		 temp.GetComponent<MeshRenderer>().sharedMaterial = tempColor;
+
+	}
 }
