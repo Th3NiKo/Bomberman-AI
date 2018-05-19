@@ -229,8 +229,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 5.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -288,6 +288,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   emptyObject: {fileID: 1626184062629896, guid: 3adff2616aac03c43ae4601f1486e7b7,
     type: 2}
+  waterObject: {fileID: 1875992931504286, guid: 3ef14f49db3b2fa409ad83e7ececf3d2,
+    type: 2}
   unbreakableObject: {fileID: 1204135858783722, guid: 6c4c8acad66630e458a514dae375d750,
     type: 2}
   breakableObject: {fileID: 1310626462629982, guid: 99d016640aaed8749938a808cf2f5ef0,
@@ -296,12 +298,14 @@ MonoBehaviour:
   Player1: {fileID: 1000523786555220, guid: 21da90f6779e95940a4523f8a178c0b5, type: 2}
   Player2: {fileID: 1475574698768884, guid: 6a562e3b4941f2c46b0bf77eb02825b3, type: 2}
   Player3: {fileID: 1181851861219370, guid: c9d6365c23e270c408094b7dc0899c7f, type: 2}
-  explosionObject: {fileID: 1368175635844248, guid: 6f78009070f0ff043b4c1a7eb16731a2,
-    type: 2}
+  Marker: {fileID: 1978604891171818, guid: 718d43d2bd1a8154a8c77f0e16574670, type: 2}
+  explosionObject: {fileID: 100000, guid: 3349198dfac824d7190d4cd04d2a7305, type: 2}
   dmg: {fileID: 2100000, guid: 71a4728733717ff4aa76260de297c2b6, type: 2}
+  startPoint: {x: 1, y: 1}
+  endPoint: {x: 5, y: 7}
   rowsCount: 11
   columnsCount: 11
-  howMany: 18
+  howMany: 8
 --- !u!4 &1056530390
 Transform:
   m_ObjectHideFlags: 0

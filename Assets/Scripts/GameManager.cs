@@ -12,6 +12,7 @@ Walls
 
 Terrain
 0 - Empty space
+6 - Water
 (-1) - Not assigned
 
 Items
@@ -40,20 +41,97 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/* 
+public class Node {
+	public float g;
+	public float h;
+	public float f;
+
+	public Node parent;
+	public Vector2 position;
+
+
+	public Node(Node _parent, Vector2 _position){
+		g = 0.0f;
+		h = 0.0f;
+		f = 0.0f;
+		parent = _parent;
+		position = _position;
+	}
+}*/
+
+public class Node {
+	public float g;
+	public float h;
+	public float f;
+
+	public Node parent;
+	public Vector2 position;
+	public Direction orientation;
+
+	public int waterPenalty;
+
+
+	public Node(Node _parent, Vector2 _position, Direction _orient){
+		g = 0.0f;
+		h = 0.0f;
+		f = 0.0f;
+		parent = _parent;
+		position = _position;
+		orientation = _orient;
+		waterPenalty = 0;
+	}
+
+	public Node(){
+
+	}
+}
+
+
+public enum Direction {DOWN, LEFT, RIGHT, UP};
+
+public enum Action {RotateClockwise, RotateCounterClockwise, MoveForward}
+
+public class Player{
+	public Direction Orientation;
+	public int x;
+	public int y;
+
+	public int health;
+
+	public int bombState;
+
+	public Player(Direction o, int _x, int _y){
+		Orientation = 0;
+		x = _x;
+		y = _y;
+		bombState = 0;
+		health = 3;
+	}
+
+};
+
+
 public class GameManager : MonoBehaviour {
 
 	//Prefabs representing array
+	
 	public GameObject emptyObject;
+	public GameObject waterObject;
 	public GameObject unbreakableObject;
 	public GameObject breakableObject;
 	public GameObject bombObject;
 	public GameObject Player1;
 	public GameObject Player2;
 	public GameObject Player3;
+	public GameObject Marker;
 
 	public GameObject explosionObject;
 	public Material dmg;
 
+	public Vector2 startPoint;
+	public Vector2 endPoint;
 
 
 	//Variables
@@ -77,28 +155,43 @@ public class GameManager : MonoBehaviour {
 	private int oneHealth = 3;
 	private int twoHealth = 3;
 	private int threeHealth = 3;
+	List<Action> listaKrokow ;
 
+	public List<Player> players;
+	bool once = true;
+	int counterMain = 0;
 	void Start () {
+		players = new List<Player>();
 		map = new int [rowsCount, columnsCount];
 		createMap(howMany);
 		renderMap();
+		listaKrokow	= aStar(startPoint,players[0].Orientation, endPoint, Direction.DOWN);
+	
+		
 	}
 	
-	
+
+
+
 	void Update () {
 		turnTimer += Time.deltaTime;
 		//Keyboard input for tests
 		if(Input.GetKey(KeyCode.UpArrow)){
-			MoveUp(10);
-		} else if(Input.GetKey(KeyCode.DownArrow)){
-			MoveDown(10);
-		} else if(Input.GetKey(KeyCode.LeftArrow)){
-			MoveLeft(10);
-		} else if(Input.GetKey(KeyCode.RightArrow)){
-			MoveRight(10);
-		} else if(Input.GetKey(KeyCode.Space)){
+			//MoveUp(10);
+			MoveForward(10);
+		} else if(Input.GetKeyDown(KeyCode.DownArrow)){
+			//MoveDown(10);
+		} else if(Input.GetKeyDown(KeyCode.LeftArrow)){
+			//MoveLeft(10);
+			RotateCounterClockwise(10);
+		} else if(Input.GetKeyDown(KeyCode.RightArrow)){
+			//MoveRight(10);
+			RotateClockwise(10);
+		} else if(Input.GetKeyDown(KeyCode.Space)){
 			PlaceBomb(10);
 		}
+
+		
 		if(turnTimer >= turnTime){
 			//If time passes everyone can move again
 			removeAll();
@@ -107,6 +200,27 @@ public class GameManager : MonoBehaviour {
 			oneMoved = false;
 			twoMoved = false;
 			threeMoved = false;
+			if(listaKrokow != null && counterMain < listaKrokow.Count){
+				if(listaKrokow[counterMain] == Action.MoveForward){
+					MoveForward(10);
+				} else if (listaKrokow[counterMain] == Action.RotateClockwise){
+					RotateClockwise(10);
+				} else {
+					RotateCounterClockwise(10);
+				}
+			}
+			counterMain++;
+		}
+		
+		if(once == true){
+			if(listaKrokow != null){
+				for(int i = 0; i < listaKrokow.Count; i++){
+					Debug.Log(listaKrokow[i].ToString());
+					//Debug.Log("Znajduje tam sie: " + map[(int)listaKrokow[i].x, (int)listaKrokow[i].y]);
+					//Instantiate(Marker, new Vector3(listaKrokow[i].x, 1.1f, listaKrokow[i].y), Quaternion.identity);
+				}
+			}
+			once = false;
 		}
 	}
 
@@ -140,11 +254,21 @@ public class GameManager : MonoBehaviour {
 		map[1,1] = 10;
 		map[1,columnsCount - 2] = 20;
 		map[rowsCount - 2, 1] = 30;
+		Player p1 = new Player(Direction.RIGHT, 1,1);
+		Player p2 = new Player(Direction.LEFT, 1,columnsCount - 2);
+		Player p3 = new Player(Direction.DOWN, rowsCount - 2,1);
+		players.Add(p1); //10
+		players.Add(p2); //20
+		players.Add(p3); //30
 		//and set near blocks empty (0) so they can leave without blowing urself
 		map[1,2] = 0; map[2,1] = 0;
 		map[1,columnsCount - 3] = 0; map[2, columnsCount - 2] = 0;
 		map[rowsCount - 3, 1] = 0; map[rowsCount - 2, 2] = 0;
-
+		map[rowsCount / 2, columnsCount / 2] = 6;
+		map[rowsCount / 2 - 1, columnsCount / 2] = 6;
+		map[rowsCount / 2 + 1, columnsCount / 2] = 6;
+		map[rowsCount / 2, columnsCount / 2 - 1] = 6;
+		map[rowsCount / 2, columnsCount / 2 + 1] = 6;
 		//Now we will choose our breakable blocks randomly from these which are avaliable (-1)
 		//First search for avaliable and add them to list
 		List<Vector2> avabliableList = new List<Vector2>();
@@ -168,6 +292,8 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 
+
+
 		//If there are any other avaliable places change them to empty
 		for(int i = 0;i < avabliableList.Count; i++){
 			map[(int)avabliableList[i].x,(int)avabliableList[i].y] = 0;
@@ -181,12 +307,18 @@ public class GameManager : MonoBehaviour {
 		//Debug.Log(oneBomb);
 		float startX = 0.0f;
 		float startY = 0.0f;
+		
 		for(int i = 0; i < rowsCount; i++){
 			startY = 0.0f;
 			for(int j = 0; j < columnsCount; j++){
+
+
 				switch(map[i,j]){
 					case 0:
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
+					break;
+					case 6:
+						Instantiate(waterObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 8:
 						Instantiate(breakableObject,new Vector3(startX, 1f, startY), Quaternion.identity);
@@ -195,15 +327,15 @@ public class GameManager : MonoBehaviour {
 						Instantiate(unbreakableObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 10:
-						Instantiate(Player1,new Vector3(startX, 1f, startY), Quaternion.identity);
+						Instantiate(Player1,new Vector3(startX, 1f, startY), setRotation(10));
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 20:
-						Instantiate(Player2,new Vector3(startX, 1f, startY), Quaternion.identity);						
+						Instantiate(Player2,new Vector3(startX, 1f, startY), setRotation(20));						
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 30:
-						Instantiate(Player3,new Vector3(startX, 1f, startY), Quaternion.identity);
+						Instantiate(Player3,new Vector3(startX, 1f, startY), setRotation(30));
 						Instantiate(emptyObject,new Vector3(startX, 1f, startY), Quaternion.identity);
 					break;
 					case 4:
@@ -299,20 +431,59 @@ public class GameManager : MonoBehaviour {
 		return map;
 	}
 
+	public void RotateClockwise(int playerIndex){
+		if(canMove(playerIndex)){
+			int index = (playerIndex / 10) - 1;
+			
+			switch(players[index].Orientation){
+				case Direction.UP:
+					players[index].Orientation = Direction.RIGHT;
+				break;
+				case Direction.LEFT:
+					players[index].Orientation = Direction.UP;
+				break;
+				case Direction.RIGHT:
+					players[index].Orientation = Direction.DOWN;
+				break;
+				case Direction.DOWN:
+					players[index].Orientation = Direction.LEFT;
+				break;
+			}
+			playerMoved(playerIndex);
+		}
+	}
+
+	public void RotateCounterClockwise(int playerIndex){
+		if(canMove(playerIndex)){
+			int index = (playerIndex / 10 - 1);
+			switch(players[index].Orientation){
+				case Direction.UP:
+					players[index].Orientation = Direction.LEFT;
+				break;
+				case Direction.LEFT:
+					players[index].Orientation = Direction.DOWN;
+				break;
+				case Direction.RIGHT:
+					players[index].Orientation = Direction.UP;
+				break;
+				case Direction.DOWN:
+					players[index].Orientation = Direction.RIGHT;
+				break;
+			}
+			playerMoved(playerIndex);
+		}
+	}
+
 	public void MoveUp(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i,j + 1] == 0)){
+				if((map[i,j] == playerIndex) && (map[i,j + 1] == 0 || map[i,j + 1] == 6)){
 					if(canMove(playerIndex)){
+						int lastTile = map[i,j - 1];
 						map[i,j + 1] = playerIndex;
+						players[(playerIndex / 10) - 1].y = players[(playerIndex / 10) - 1].y + 1;
 						playerMoved(playerIndex);
-						if(shouldCreateBomb(playerIndex)){ //Bomb is on state 5 so we need to create it 
-							map[i,j] = 4;
-							bombCreated(playerIndex);
-
-						} else {
-							map[i,j] = 0;
-						}
+						map[i,j] = 0;
 						break;
 					}
 				}
@@ -324,16 +495,13 @@ public class GameManager : MonoBehaviour {
 	public void MoveDown(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i,j - 1] == 0)){
+				if((map[i,j] == playerIndex) && (map[i,j - 1] == 0 || map[i,j - 1] == 6)){
 					if(canMove(playerIndex)){
+						int lastTile = map[i,j - 1];
 						map[i,j - 1] = playerIndex;
-						if(shouldCreateBomb(playerIndex)){ //Bomb is on state 5 so we need to create it 
-							map[i,j] = 4;
-							bombCreated(playerIndex);
-						} else {
-							map[i,j] = 0;
-						}
+						players[(playerIndex / 10) - 1].y = players[(playerIndex / 10) - 1].y - 1;
 						playerMoved(playerIndex);
+						map[i,j] = 0;
 						break;
 					}
 				}
@@ -344,16 +512,13 @@ public class GameManager : MonoBehaviour {
 	public void MoveLeft(int playerIndex){
 		for(int i = 1; i < rowsCount; i++){
 			for(int j = 1; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i - 1,j] == 0)){
+				if((map[i,j] == playerIndex) && (map[i - 1,j] == 0 || map[i-1,j] == 6)){
 					if(canMove(playerIndex)){
+						int lastTile = map[i - 1,j];
 						map[i - 1,j] = playerIndex;
-						if(shouldCreateBomb(playerIndex)){ //Bomb is on state 5 so we need to create it 
-							map[i,j] = 4;
-							bombCreated(playerIndex);
-						} else {
-							map[i,j] = 0;
-						}
-						playerMoved(playerIndex);	
+						players[(playerIndex / 10) - 1].x = players[(playerIndex / 10) - 1].x - 1;
+						playerMoved(playerIndex);
+						map[i,j] = 0;
 						break;				
 					}
 				}
@@ -364,16 +529,14 @@ public class GameManager : MonoBehaviour {
 	public void MoveRight(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
-				if((map[i,j] == playerIndex) && (map[i + 1,j] == 0)){
+				if((map[i,j] == playerIndex) && (map[i + 1,j] == 0 || map[i + 1,j] == 6)){
 					if(canMove(playerIndex)){
+						int lastTile = map[i + 1,j];
 						map[i + 1,j] = playerIndex;
+						players[(playerIndex / 10) - 1].x = players[(playerIndex / 10) - 1].x + 1;
 						playerMoved(playerIndex);
-						if(shouldCreateBomb(playerIndex)){ //Bomb is on state 5 so we need to create it 
-							map[i,j] = 4;
-							bombCreated(playerIndex);
-						} else {
-							map[i,j] = 0;
-						}						
+						map[i,j] = 0;
+						break;		
 					}
 				}
 			}
@@ -381,17 +544,54 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void PlaceBomb(int playerIndex){
+		int index = (playerIndex / 10) - 1;
+		int _x = players[index].x;
+		int _y = players[index].y;
+		Direction temp = players[index].Orientation;
 		if(!isBombPlaced(playerIndex)){ //If player doesnt have bomb on a map
-			if(playerIndex == 10){
-				oneBomb = 5;
-			} else if(playerIndex == 20){
-				twoBomb = 5;
-			} else if(playerIndex == 30){
-				threeBomb = 5;
+		
+			//Is place empty for bomb
+			int bombX = _x;
+			int bombY = _y;
+			switch(temp){
+				case Direction.DOWN:
+					bombY--;
+				break;
+				case Direction.LEFT:
+					bombX--;
+				break;
+				case Direction.RIGHT:
+					bombX++;
+				break;
+				case Direction.UP:
+					bombY++;
+				break;
+			}
+			if(map[bombX, bombY] == 0){
+				map[bombX,bombY] = 4;
+				players[index].bombState = 4;
 			}
 		}
+		playerMoved(playerIndex);
 	}
 
+	public void MoveForward(int playerIndex){
+		int index = (playerIndex / 10) - 1;
+		switch(players[index].Orientation){
+			case Direction.DOWN:
+				MoveDown(playerIndex);
+			break;
+			case Direction.LEFT:
+				MoveLeft(playerIndex);
+			break;
+			case Direction.RIGHT:
+				MoveRight(playerIndex);
+			break;
+			case Direction.UP:
+				MoveUp(playerIndex);
+			break;
+		}
+	}
 
 	//Guards functions
 	private bool canMove(int playerIndex){ //Can player move?
@@ -421,61 +621,42 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	private bool isBombPlaced(int playerIndex){ //Is player bomb placed already?
-		if(playerIndex == 10){
-			if(oneBomb == 0){
-				return false;
-			} else {
-				return true;
-			}
-		} else if(playerIndex == 20){
-			if(twoBomb == 0){
-				return false;
-			} else {
-				return true;
-			}
-		} else if(playerIndex == 30){
-			if(threeBomb == 0){
-				return false;
-			} else {
-				return true;
-			}
+	private Quaternion setRotation(int playerIndex){
+		
+		Quaternion x = Quaternion.identity;
+		int index = (playerIndex / 10) - 1;
+		switch(players[index].Orientation){
+			case Direction.DOWN:
+				x = Quaternion.Euler(0,90,0);
+			break;
+			case Direction.LEFT:
+				x = Quaternion.Euler(0,-180,0);
+			break;
+			case Direction.RIGHT:
+				x = Quaternion.Euler(0,0,0);
+			break;
+			case Direction.UP:
+				x = Quaternion.Euler(0,-90,0);
+			break;
 		}
-		return false;
+		return x;
+
+	}
+	private bool isBombPlaced(int playerIndex){ //Is player bomb placed already?
+		if(players[(playerIndex / 10) - 1].bombState == 0){
+			return false;
+		} else {
+			return true;
+		}
 	}
 
-	private bool shouldCreateBomb(int playerIndex){ //Do i need to create bomb after move?
-		if(playerIndex == 10){
-			if(oneBomb != 5){
-				return false;
-			} else {
-				return true;
-			}
-		} else if(playerIndex == 20){
-			if(twoBomb != 5){
-				return false;
-			} else {
-				return true;
-			}
-		} else if(playerIndex == 30){
-			if(threeBomb != 5){
-				return false;
-			} else {
-				return true;
-			}
-		}
-		return false;
-	}
+
 
 	private void bombsTickDown(){
-		if(oneBomb > 0 && oneBomb < 5){
-			oneBomb--;
-		}
-		if(twoBomb > 0 && twoBomb < 5){
-			twoBomb--;
-		}
-		if(threeBomb > 0 && threeBomb < 5){
-			threeBomb--;
+		foreach(Player p in players){
+			if(p.bombState > 0 && p.bombState < 5){
+				p.bombState--;
+			}
 		}
 	}
 
@@ -490,13 +671,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void takeHealthDown(int playerIndex){
-		if(playerIndex == 10){
-			oneHealth--;
-		} else if(playerIndex == 20){
-			twoHealth--;
-		} else if(playerIndex == 30){
-			threeHealth--;
-		}
+		players[(playerIndex / 10) - 1].health--;
 	}
 
 	private IEnumerator changeColor(int playerIndex){
@@ -512,8 +687,192 @@ public class GameManager : MonoBehaviour {
 		 }
 		 Material tempColor = temp.GetComponent<MeshRenderer>().sharedMaterial;
 		 temp.GetComponent<MeshRenderer>().sharedMaterial = dmg;
-		 yield return new WaitForSeconds(.1f);
+		 yield return new WaitForSeconds(.3f);
 		 temp.GetComponent<MeshRenderer>().sharedMaterial = tempColor;
+
+	}
+
+
+
+
+	private List<Action> aStar(Vector2 start, Direction startDir, Vector2 end, Direction endDir){
+		if(map[(int)end.x, (int)end.y] == 0){
+
+		Node start_node = new Node(null, start, startDir);
+		Node end_node = new Node(null, end, endDir);
+
+		List<Node> open_list = new List<Node>(); 
+		List<Node> closed_list = new List<Node>();
+
+		open_list.Add(start_node);
+		while(open_list.Count > 0){
+			//Get current node
+			Node current_node = open_list[0];
+			int current_index = 0;
+			for(int i = 0; i < open_list.Count; i++){
+				if(open_list[i].f <= current_node.f){
+					current_node = open_list[i];
+					current_index = i;
+				}
+			}
+
+			//Pop current element and add it to closed list
+			open_list.RemoveAt(current_index);
+			closed_list.Add(current_node);
+
+			//If found a goal
+			if(current_node.position == end_node.position){
+				List<Action> path = new List<Action>();
+				Node current = current_node;
+				Vector2 lastPosition = new Vector2(-1,-1);
+				Direction lastDir = Direction.DOWN;
+				int counter = 0;
+				while(current != null){
+					if(counter != 0){
+						if(lastPosition != current.position){
+							path.Add(Action.MoveForward);
+						} else {
+							if(lastDir == Direction.LEFT){
+								if(current.orientation == Direction.UP){
+									path.Add(Action.RotateCounterClockwise);
+								} else {
+									path.Add(Action.RotateClockwise);
+								}
+							} else if(lastDir == Direction.RIGHT){
+								if(current.orientation == Direction.UP){
+									path.Add(Action.RotateClockwise);
+								} else {
+									path.Add(Action.RotateCounterClockwise);
+								}
+							} else if(lastDir == Direction.UP){
+								if(current.orientation == Direction.RIGHT){
+									path.Add(Action.RotateCounterClockwise);
+								} else {
+									path.Add(Action.RotateClockwise);
+								}
+							} else if(lastDir == Direction.DOWN){
+								if(current.orientation == Direction.RIGHT){
+									path.Add(Action.RotateClockwise);
+								} else {
+									path.Add(Action.RotateCounterClockwise);
+								}
+							} 
+						}
+
+					} 
+					//path.Add(current.position);
+					
+					lastPosition = current.position;
+					lastDir = current.orientation;
+					current = current.parent;
+					counter++;
+				}
+				path.Reverse();
+				return path;
+			}
+
+			//Children generating
+			List<Node> children = new List<Node>();
+			List<Vector2> new_position = new List<Vector2>();
+			//All possible moves
+			new_position.Add(new Vector2(1,0));
+			new_position.Add(new Vector2(-1,0));
+			new_position.Add(new Vector2(0,1));
+			new_position.Add(new Vector2(0,-1));
+			Vector2 node_position = new Vector3(0,0,0);
+			Node new_node = new Node();
+			switch(current_node.orientation){
+				case Direction.DOWN:
+					node_position = new Vector2(current_node.position.x + new_position[3].x, current_node.position.y + new_position[3].y);
+					new_node = new Node(current_node, current_node.position, Direction.LEFT);
+					children.Add(new_node);
+					new_node = new Node(current_node, current_node.position, Direction.RIGHT);
+					children.Add(new_node);
+				break;
+				case Direction.LEFT:
+					node_position = new Vector2(current_node.position.x + new_position[1].x, current_node.position.y + new_position[1].y);
+					new_node = new Node(current_node, current_node.position, Direction.UP);
+					children.Add(new_node);
+					new_node = new Node(current_node, current_node.position, Direction.DOWN);
+					children.Add(new_node);
+				break;
+				case Direction.RIGHT:
+					node_position = new Vector2(current_node.position.x + new_position[0].x, current_node.position.y + new_position[0].y);
+					new_node = new Node(current_node, current_node.position, Direction.UP);
+					children.Add(new_node);
+					new_node = new Node(current_node, current_node.position, Direction.DOWN);
+					children.Add(new_node);
+				break;
+				case Direction.UP:
+					node_position = new Vector2(current_node.position.x + new_position[2].x, current_node.position.y + new_position[2].y);
+					new_node = new Node(current_node, current_node.position, Direction.LEFT);
+					children.Add(new_node);
+					new_node = new Node(current_node, current_node.position, Direction.RIGHT);
+					children.Add(new_node);
+				break;
+			}
+			if(map[(int)node_position.x, (int)node_position.y] == 0){
+				new_node = new Node(current_node, node_position, current_node.orientation);
+				children.Add(new_node);
+			} else if(map[(int)node_position.x, (int)node_position.y] == 6){
+				new_node = new Node(current_node, node_position, current_node.orientation);
+				new_node.waterPenalty += 25;
+				children.Add(new_node);
+			}
+
+			
+
+			/* 
+			for(int i = 0; i < new_position.Count; i++){
+				Vector2 node_position = new Vector2(current_node.position.x + new_position[i].x, current_node.position.y + new_position[i].y);
+
+				//Check obstacles
+				if(map[(int)node_position.x, (int)node_position.y] != 0){
+					continue;
+				}
+
+
+				//Creating new node
+				Node new_node = new Node(current_node, node_position);
+				children.Add(new_node);
+			} */
+
+
+			//Loop through all childrens (possible moves)
+			for(int i = 0;i < children.Count; i++){
+
+				bool toAdd = true;
+				//Check if child is on closed list already
+				for(int j = 0; j < closed_list.Count; j++){
+					if((children[i].position == closed_list[j].position) && (children[i].orientation == closed_list[j].orientation)){
+						toAdd = false;
+					}
+				}
+
+				//Counting g h f
+				children[i].g = current_node.g + 1 + current_node.waterPenalty;
+				children[i].h = (Mathf.Pow(children[i].position.x - end_node.position.x,2) + Mathf.Pow(children[i].position.y - end_node.position.y,2));
+				children[i].f = children[i].g + children[i].h;
+
+				//If child is already on open list
+				for(int j = 0; j < open_list.Count; j++){
+					if(((children[i].position == open_list[j].position)&&(children[i].orientation == open_list[j].orientation)) && (children[i].g > open_list[j].g)){
+						toAdd = false;
+					}
+				}
+
+				if(toAdd == true){
+					open_list.Add(children[i]);
+				}
+
+			}
+
+		}
+		return null;
+		} else {
+			Debug.LogWarning("U cant move there...");
+		}
+		return null;
 
 	}
 }
