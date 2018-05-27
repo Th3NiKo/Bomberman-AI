@@ -16,19 +16,24 @@ public class MinMaxAi : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        // turnTime = gameManager.GetTurnTime();
+        turnTime = gameManager.GetTurnTime();
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
         if (timer > turnTime) {
-            //Tutaj pojedyncza runda sie rozgrywa
-            
-            //Mozesz dac tutaj np, czyli dopoki gra sie nie skonczy
-            // while(gameManager.GameFinished() == -1){
-                   
-            // }
+            // Możliwości: 
+            // idź - koszt 1
+            // obrót w lewo - koszt 1
+            // obrót w prawo - koszt 1
+            // czekaj - koszt 0
+            // postaw bombę - koszt 1
+            // pola:
+            // bomba i kratka w lewo, prawo, gora, dół, d = -1000
+            // puste
+            // przeciwnicy
+            // woda
             
 
 
