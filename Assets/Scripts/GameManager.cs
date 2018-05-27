@@ -46,7 +46,8 @@ PlaceBomb(int playerIndex)
 CheckHp(int playerIndex) //Zwraca hp danego gracza
 GetMap()
 GameFinished() //Zwraca numer gracza ktory wygral jezeli gra sie zakonczyla. Jezeli gra nadal trwa zwraca -1
-
+GetTurnTime() //Zwraca ile trwa runda
+CanMoveForward(int playerIndex) //Zwraca czy mozemy sie ruszyc prosto
 
 */
 
@@ -593,6 +594,38 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public bool CanMoveForward(int playerIndex){
+		int index = (playerIndex / 10) - 1;
+		switch(players[index].Orientation){
+			case Direction.DOWN:
+			if(map[players[index].x,players[index].y-1] == 0 || map[players[index].x,players[index].y-1] == 6){
+				return true;
+			} else {
+				return false;
+			}
+			case Direction.LEFT:
+			if(map[players[index].x - 1,players[index].y] == 0 || map[players[index].x - 1,players[index].y] == 6){
+				return true;
+			} else {
+				return false;
+			}
+			case Direction.RIGHT:
+			if(map[players[index].x + 1,players[index].y] == 0 || map[players[index].x + 1,players[index].y] == 6){
+				return true;
+			} else {
+				return false;
+			}
+			case Direction.UP:
+			if(map[players[index].x,players[index].y+1] == 0 || map[players[index].x,players[index].y+1] == 6){
+				return true;
+			} else {
+				return false;
+			}
+			
+		}
+		return false;
+	}
+
 	public int CheckHp(int playerIndex){
 		return players[(playerIndex / 10) - 1].health;
 	}
@@ -601,6 +634,9 @@ public class GameManager : MonoBehaviour {
 		return gameWonBy;
 	}
 
+	public float GetTurnTime(){
+		return turnTime;
+	}
 
 
 	//Guards functions
@@ -673,6 +709,7 @@ public class GameManager : MonoBehaviour {
 		return x;
 
 	}
+
 	private bool isBombPlaced(int playerIndex){ //Is player bomb placed already?
 		if(players[(playerIndex / 10) - 1].bombState == 0){
 			return false;
@@ -680,7 +717,6 @@ public class GameManager : MonoBehaviour {
 			return true;
 		}
 	}
-
 
 
 	private void bombsTickDown(){
