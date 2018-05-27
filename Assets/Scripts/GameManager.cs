@@ -34,7 +34,21 @@ oneBomb = 3 Bomb ticks
 oneBomb = 2 Bomb ticks
 oneBomb = 1 Bomb blows
 oneBomb = 0 No Bomb for player
- */
+
+
+
+Funkcje publiczne (do użytku):
+
+RotateClockwise(int playerIndex)
+RotateCounterClockwise(int playerIndex)
+MoveForward(int playerIndex)
+PlaceBomb(int playerIndex)
+CheckHp(int playerIndex) //Zwraca hp danego gracza
+GetMap()
+GameFinished() //Zwraca numer gracza ktory wygral jezeli gra sie zakonczyla. Jezeli gra nadal trwa zwraca -1
+
+
+*/
 
 
 using System.Collections;
@@ -42,24 +56,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-/* 
-public class Node {
-	public float g;
-	public float h;
-	public float f;
-
-	public Node parent;
-	public Vector2 position;
-
-
-	public Node(Node _parent, Vector2 _position){
-		g = 0.0f;
-		h = 0.0f;
-		f = 0.0f;
-		parent = _parent;
-		position = _position;
-	}
-}*/
 
 public class Node {
 	public float g;
@@ -151,6 +147,8 @@ public class GameManager : MonoBehaviour {
 	private bool threeMoved = false;
 	private int threeBomb = 0;
 
+	private int gameWonBy = -1;
+
 	//Lifes
 	private int oneHealth = 3;
 	private int twoHealth = 3;
@@ -165,8 +163,9 @@ public class GameManager : MonoBehaviour {
 		map = new int [rowsCount, columnsCount];
 		createMap(howMany);
 		renderMap();
+		/* ASTAR SHOWCASE
 		listaKrokow	= aStar(startPoint,players[0].Orientation, endPoint, Direction.DOWN);
-	
+		*/
 		
 	}
 	
@@ -177,15 +176,11 @@ public class GameManager : MonoBehaviour {
 		turnTimer += Time.deltaTime;
 		//Keyboard input for tests
 		if(Input.GetKey(KeyCode.UpArrow)){
-			//MoveUp(10);
 			MoveForward(10);
-		} else if(Input.GetKeyDown(KeyCode.DownArrow)){
-			//MoveDown(10);
 		} else if(Input.GetKeyDown(KeyCode.LeftArrow)){
 			//MoveLeft(10);
 			RotateCounterClockwise(10);
 		} else if(Input.GetKeyDown(KeyCode.RightArrow)){
-			//MoveRight(10);
 			RotateClockwise(10);
 		} else if(Input.GetKeyDown(KeyCode.Space)){
 			PlaceBomb(10);
@@ -200,6 +195,7 @@ public class GameManager : MonoBehaviour {
 			oneMoved = false;
 			twoMoved = false;
 			threeMoved = false;
+			/* ASTAR SHOWCASE
 			if(listaKrokow != null && counterMain < listaKrokow.Count){
 				if(listaKrokow[counterMain] == Action.MoveForward){
 					MoveForward(10);
@@ -209,9 +205,10 @@ public class GameManager : MonoBehaviour {
 					RotateCounterClockwise(10);
 				}
 			}
-			counterMain++;
+			counterMain++;*/
 		}
 		
+		/* ASTAR SHOWCASE
 		if(once == true){
 			if(listaKrokow != null){
 				for(int i = 0; i < listaKrokow.Count; i++){
@@ -221,7 +218,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 			once = false;
-		}
+		} */
 	}
 
 
@@ -414,6 +411,7 @@ public class GameManager : MonoBehaviour {
 			startX += 1f;
 		}
 		bombsTickDown(); //All bombs counter down (guards);
+		CheckDeaths();
 
 	}
 
@@ -427,7 +425,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	//Functions to use from other scripts are here
-	public int[,] getMap(){
+	public int[,] GetMap(){
 		return map;
 	}
 
@@ -474,7 +472,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public void MoveUp(int playerIndex){
+	private void MoveUp(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
 				if((map[i,j] == playerIndex) && (map[i,j + 1] == 0 || map[i,j + 1] == 6)){
@@ -492,7 +490,7 @@ public class GameManager : MonoBehaviour {
 		
 	}
 
-	public void MoveDown(int playerIndex){
+	private void MoveDown(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
 				if((map[i,j] == playerIndex) && (map[i,j - 1] == 0 || map[i,j - 1] == 6)){
@@ -509,7 +507,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public void MoveLeft(int playerIndex){
+	private void MoveLeft(int playerIndex){
 		for(int i = 1; i < rowsCount; i++){
 			for(int j = 1; j < columnsCount; j++){
 				if((map[i,j] == playerIndex) && (map[i - 1,j] == 0 || map[i-1,j] == 6)){
@@ -526,7 +524,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public void MoveRight(int playerIndex){
+	private void MoveRight(int playerIndex){
 		for(int i = 0; i < rowsCount; i++){
 			for(int j = 0; j < columnsCount; j++){
 				if((map[i,j] == playerIndex) && (map[i + 1,j] == 0 || map[i + 1,j] == 6)){
@@ -544,35 +542,37 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void PlaceBomb(int playerIndex){
-		int index = (playerIndex / 10) - 1;
-		int _x = players[index].x;
-		int _y = players[index].y;
-		Direction temp = players[index].Orientation;
-		if(!isBombPlaced(playerIndex)){ //If player doesnt have bomb on a map
-		
-			//Is place empty for bomb
-			int bombX = _x;
-			int bombY = _y;
-			switch(temp){
-				case Direction.DOWN:
-					bombY--;
-				break;
-				case Direction.LEFT:
-					bombX--;
-				break;
-				case Direction.RIGHT:
-					bombX++;
-				break;
-				case Direction.UP:
-					bombY++;
-				break;
+		if(CheckHp(playerIndex) > 0){
+			int index = (playerIndex / 10) - 1;
+			int _x = players[index].x;
+			int _y = players[index].y;
+			Direction temp = players[index].Orientation;
+			if(!isBombPlaced(playerIndex)){ //If player doesnt have bomb on a map
+			
+				//Is place empty for bomb
+				int bombX = _x;
+				int bombY = _y;
+				switch(temp){
+					case Direction.DOWN:
+						bombY--;
+					break;
+					case Direction.LEFT:
+						bombX--;
+					break;
+					case Direction.RIGHT:
+						bombX++;
+					break;
+					case Direction.UP:
+						bombY++;
+					break;
+				}
+				if(map[bombX, bombY] == 0){
+					map[bombX,bombY] = 4;
+					players[index].bombState = 4;
+				}
 			}
-			if(map[bombX, bombY] == 0){
-				map[bombX,bombY] = 4;
-				players[index].bombState = 4;
-			}
+			playerMoved(playerIndex);
 		}
-		playerMoved(playerIndex);
 	}
 
 	public void MoveForward(int playerIndex){
@@ -593,6 +593,16 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	public int CheckHp(int playerIndex){
+		return players[(playerIndex / 10) - 1].health;
+	}
+
+	public int GameFinished(){
+		return gameWonBy;
+	}
+
+
+
 	//Guards functions
 	private bool canMove(int playerIndex){ //Can player move?
 		if(playerIndex == 10){
@@ -609,6 +619,27 @@ public class GameManager : MonoBehaviour {
 			}	
 		}
 		return false;
+	}
+
+	private void CheckDeaths(){
+		int howManyAlive = 0;
+		for(int i = 0; i < 3; i++){
+			if(players[i].health == 0){
+				map[players[i].x, players[i].y] = 0;
+				players[i].health = -1; //Doesnt exist
+			} else if(players[i].health == -1){
+				howManyAlive++;
+			}
+		}
+
+		if(howManyAlive >= 2){
+			for(int i = 0; i < 3; i++){
+				if(players[i].health > 0){
+					gameWonBy = (i + 1) * 10;
+				}
+			}
+			Debug.Log("Koniec parti");
+		}
 	}
 
 	private void playerMoved(int playerIndex){ //Player has moved
