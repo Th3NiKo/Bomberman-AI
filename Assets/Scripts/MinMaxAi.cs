@@ -1,4 +1,4 @@
-﻿﻿using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -337,14 +337,31 @@ public class MinMaxAi : MonoBehaviour {
                             gameManager.PlaceBomb(playerIndex);
                               ruch = Action.Wait;
                         } else {
-                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
-                                                                    gameManager.players[2].Orientation, 
-                                                                    new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Direction.LEFT);
+                            // listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            //                                         gameManager.players[2].Orientation, 
+                            //                                         new Vector2(gameManager.players[2].x, gameManager.players[2].y),
+                            //                                         Direction.LEFT);
 
-                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
-                                iloscRuchow = listaKrokow2.Count;
-                                ruch = listaKrokow2[0];
+                            // if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                            //     iloscRuchow = listaKrokow2.Count;
+                            //     ruch = listaKrokow2[0];
+                            // }
+
+                            if (gameManager.players[2].Orientation == Direction.UP) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.RIGHT) {
+                                if (iloscRuchow > 2) {
+                                    iloscRuchow = 2;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.DOWN) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateClockwise(playerIndex);
+                                }
                             }
                         }
                         
@@ -360,14 +377,30 @@ public class MinMaxAi : MonoBehaviour {
                             gameManager.PlaceBomb(playerIndex);
                              ruch = Action.Wait;
                         } else {
-                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
-                                                                    gameManager.players[2].Orientation, 
-                                                                    new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Direction.UP);
+                            // listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            //                                         gameManager.players[2].Orientation, 
+                            //                                         new Vector2(gameManager.players[2].x, gameManager.players[2].y),
+                            //                                         Direction.UP);
 
-                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
-                                iloscRuchow = listaKrokow2.Count;
-                                ruch = listaKrokow2[0];
+                            // if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                            //     iloscRuchow = listaKrokow2.Count;
+                            //     ruch = listaKrokow2[0];
+                            // }
+                            if (gameManager.players[2].Orientation == Direction.RIGHT) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.DOWN) {
+                                if (iloscRuchow > 2) {
+                                    iloscRuchow = 2;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.LEFT) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateClockwise(playerIndex);
+                                }
                             }
                         }
                         
@@ -383,14 +416,30 @@ public class MinMaxAi : MonoBehaviour {
                             gameManager.PlaceBomb(playerIndex);
                               ruch = Action.Wait;
                         } else {
-                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
-                                                                    gameManager.players[2].Orientation, 
-                                                                    new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Direction.RIGHT);
+                            // listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            //                                         gameManager.players[2].Orientation, 
+                            //                                         new Vector2(gameManager.players[2].x, gameManager.players[2].y),
+                            //                                         Direction.RIGHT);
 
-                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
-                                iloscRuchow = listaKrokow2.Count;
-                                ruch = listaKrokow2[0];
+                            // if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                            //     iloscRuchow = listaKrokow2.Count;
+                            //     ruch = listaKrokow2[0];
+                            // }
+                            if (gameManager.players[2].Orientation == Direction.DOWN) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.LEFT) {
+                                if (iloscRuchow > 2) {
+                                    iloscRuchow = 2;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.UP) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateClockwise(playerIndex);
+                                }
                             }
                         }
                         
@@ -406,14 +455,30 @@ public class MinMaxAi : MonoBehaviour {
                             gameManager.PlaceBomb(playerIndex);
                           ruch = Action.Wait;
                         } else {
-                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
-                                                                    gameManager.players[2].Orientation, 
-                                                                    new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Direction.DOWN);
+                            // listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            //                                         gameManager.players[2].Orientation, 
+                            //                                         new Vector2(gameManager.players[2].x, gameManager.players[2].y),
+                            //                                         Direction.DOWN);
 
-                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
-                                iloscRuchow = listaKrokow2.Count;
-                                ruch = listaKrokow2[0];
+                            // if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                            //     iloscRuchow = listaKrokow2.Count;
+                            //     ruch = listaKrokow2[0];
+                            // }
+                            if (gameManager.players[2].Orientation == Direction.LEFT) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.UP) {
+                                if (iloscRuchow > 2) {
+                                    iloscRuchow = 2;
+                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                }
+                            } else if (gameManager.players[2].Orientation == Direction.RIGHT) {
+                                if (iloscRuchow > 1) {
+                                    iloscRuchow = 1;
+                                    ruch = Action.RotateClockwise(playerIndex);
+                                }
                             }
                         }
                         
