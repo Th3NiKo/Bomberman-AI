@@ -1,8 +1,27 @@
 ﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
+// Możliwości: 
+// idź - koszt -1 (woda koszt - 10) (do przeciwnika +5)
+// obrót w lewo - koszt -1
+// obrót w prawo - koszt -1
+// w/w oblicza a* 
+// czekaj - koszt 0 (bomba -100)
+// postaw bombę - koszt -5 (przy przeciwniku + 20)
 
+// pola:
+// bomba i kratka w lewo, prawo, gora, dół, d = -1000
+// puste
+// przeciwnicy
+// woda
+
+// na poczatku kazdej tury sprawdzic czy jest przejscie do przeciwnikow
+// jesli nie ma, rozwalac klocki do najblizszego
+// jesli jest przescie do jakiegos - atak
+// sprawdzac czy jest bomba 2 kratki dalej
+// jesli jest zawroc, jesli nie atak
 
 public class MinMaxAi : MonoBehaviour {
 
@@ -30,11 +49,10 @@ public class MinMaxAi : MonoBehaviour {
         Direction orientation = gameManager.players[2].Orientation;
 
         int[] listaPriorytetow = new int [5] {0, 0, 0, 0, 0};
-        Sort
 
         //obok wood, sciana, woda, obok
         /* PO LEWEJ */
-        if (map[positionX-1, positionY] == 8 || map[positionX-1, positionY] == 6 || map[positionX, positionY] == 9) {
+        if (map[positionX-1, positionY] == 8 || map[positionX-1, positionY] == 6 || map[positionX-1, positionY] == 9) {
             listaPriorytetow[0] += 0;
         }
         /* Na GÓRZE */
@@ -153,30 +171,23 @@ public class MinMaxAi : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        int max0;
+        int max1 = -1000;
+        int max2 = -1000;
+        int max3 = -1000;
+        int max4 = -1000;
         if (timer > turnTime) {
             
             int[] listaPriorytetow = MinMax();
-    
 
-            // Możliwości: 
-            // idź - koszt -1 (woda koszt - 10) (do przeciwnika +5)
-            // obrót w lewo - koszt -1
-            // obrót w prawo - koszt -1
-            // w/w oblicza a* 
-            // czekaj - koszt 0 (bomba -100)
-            // postaw bombę - koszt -5 (przy przeciwniku + 20)
+            int[] listaPriorytetowIndex = new int [5];
+            for (int i=0; i<listaPriorytetow.Length; i++) {
+                listaPriorytetowIndex[i] = listaPriorytetow[i];
+            }
 
-            // pola:
-            // bomba i kratka w lewo, prawo, gora, dół, d = -1000
-            // puste
-            // przeciwnicy
-            // woda
+            Array.Sort<int>(listaPriorytetowIndex);
 
-            // na poczatku kazdej tury sprawdzic czy jest przejscie do przeciwnikow
-            // jesli nie ma, rozwalac klocki do najblizszego
-            // jesli jest przescie do jakiegos - atak
-            // sprawdzac czy jest bomba 2 kratki dalej
-            // jesli jest zawroc, jesli nie atak
+            
             
 
 
