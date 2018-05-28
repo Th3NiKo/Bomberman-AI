@@ -23,6 +23,8 @@ public class MinMaxAi : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (timer > turnTime) {
+            
+
             // Możliwości: 
             // idź - koszt 1
             // obrót w lewo - koszt 1
@@ -34,6 +36,12 @@ public class MinMaxAi : MonoBehaviour {
             // puste
             // przeciwnicy
             // woda
+
+            // na poczatku kazdej tury sprawdzic czy jest przejscie do przeciwnikow
+            // jesli nie ma, rozwalac klocki do najblizszego
+            // jesli jest przescie do jakiegos - atak
+            // sprawdzac czy jest bomba 2 kratki dalej
+            // jesli jest zawroc, jesli nie atak
             
 
 
