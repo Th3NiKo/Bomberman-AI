@@ -454,6 +454,9 @@ public class MinMaxAi : MonoBehaviour {
             }
 
             Array.Sort<int>(listaPriorytetowIndex);
+            foreach(int element in listaPriorytetowIndex){
+                Debug.Log(element);
+            }
 
             
             int tmp = 1;

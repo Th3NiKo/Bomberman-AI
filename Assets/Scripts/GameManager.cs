@@ -639,6 +639,18 @@ public class GameManager : MonoBehaviour {
 	}
 
 
+	public List<Vector2> GetBombList(){
+		List<Vector2> listaBomb = new List<Vector2>();
+		for(int i = 0; i < rowsCount; i++){
+			for(int j = 0; j < columnsCount; j++){
+				if(map[i,j] >= 1 && map[i,j] < 5){
+					listaBomb.Add(new Vector2(i,j));
+				}
+			}
+		}
+		return listaBomb;
+	}
+
 	//Guards functions
 	private bool canMove(int playerIndex){ //Can player move?
 		if(playerIndex == 10){
