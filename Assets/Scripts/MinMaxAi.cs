@@ -318,7 +318,8 @@ public class MinMaxAi : MonoBehaviour {
             case 3:
                 int iloscRuchow = 100;
                 List<Action> listaKrokow;
-                
+                List<Vector2> listaBomb = gameManager.GetBombList();
+                ruch = null;
             break;
 
             case 4:
