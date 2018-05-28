@@ -88,7 +88,7 @@ public class Node {
 
 public enum Direction {DOWN, LEFT, RIGHT, UP};
 
-public enum Action {RotateClockwise, RotateCounterClockwise, MoveForward}
+public enum Action {RotateClockwise, RotateCounterClockwise, MoveForward, Wait}
 
 public class Player{
 	public Direction Orientation;
@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour {
 		createMap(howMany);
 		renderMap();
 
-		listaKrokow	= aStar(startPoint,players[0].Orientation, endPoint, Direction.DOWN);
+		listaKrokow	= aStar(startPoint,players[0].Orientation, endPoint, Direction.LEFT);
 		
 		
 	}
@@ -774,7 +774,7 @@ public class GameManager : MonoBehaviour {
 
 
 
-	private List<Action> aStar(Vector2 start, Direction startDir, Vector2 end, Direction endDir){
+	public List<Action> aStar(Vector2 start, Direction startDir, Vector2 end, Direction endDir){
 		if(map[(int)end.x, (int)end.y] == 0){
 
 		Node start_node = new Node(null, start, startDir);
@@ -890,7 +890,7 @@ public class GameManager : MonoBehaviour {
 					children.Add(new_node);
 				break;
 			}
-	if(map[(int)node_position.x, (int)node_position.y] == 0){
+			if(map[(int)node_position.x, (int)node_position.y] == 0){
 				new_node = new Node(current_node, node_position, current_node.orientation);
 				children.Add(new_node);
 			} else if(map[(int)node_position.x, (int)node_position.y] == 6){

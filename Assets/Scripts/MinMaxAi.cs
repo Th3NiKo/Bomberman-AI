@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -171,177 +171,180 @@ public class MinMaxAi : MonoBehaviour {
 
     int Move (int index) {
         map = gameManager.GetMap();
-        Action ruch;
+        Action ruch = Action.Wait;
+          List<Action> listaKrokow2 = new List<Action>();
+          int iloscRuchow = 100;
+          int positionX = gameManager.players[2].x;
+        int positionY = gameManager.players[2].y;
         switch(index) {
+
             //podchodzimy do gracza
             case 0:
-                int iloscRuchow = 100;
-                List<Action> listaKrokow;
+                iloscRuchow = 100;
                 //gracz 1
                 if (map[gameManager.players[0].x-1, gameManager.players[0].y] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[0].x-1, gameManager.players[0].y),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[0].x, gameManager.players[0].y+1] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[0].x, gameManager.players[0].y+1),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[0].x+1, gameManager.players[0].y] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[0].x+1, gameManager.players[0].y),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[0].x, gameManager.players[0].y-1] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[0].x, gameManager.players[0].y-1),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 //Gracz 2
                 if (map[gameManager.players[1].x-1, gameManager.players[1].y] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[1].x-1, gameManager.players[1].y),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[1].x, gameManager.players[1].y+1] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[1].x, gameManager.players[1].y+1),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[1].x+1, gameManager.players[1].y] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[1].x+1, gameManager.players[1].y),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[1].x, gameManager.players[1].y-1] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[1].x, gameManager.players[1].y-1),
                                                                 gameManager.players[2].Orientation);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 //jesli nie mamy podejscia to czekamy
                 if (iloscRuchow == 100) {
-                    ruch = null;
+                    ruch = Action.Wait;
                 }
             break;
             
             case 1:
             case 2:
-                int iloscRuchow = 100;
-                List<Action> listaKrokow;
+                iloscRuchow = 100;
+                
                 if (map[gameManager.players[2].x-1, gameManager.players[2].y] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[2].x-1, gameManager.players[2].y),
-                                                                Orientation.LEFT);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                                                                Direction.LEFT);
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[2].x, gameManager.players[2].y+1] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[2].x, gameManager.players[2].y+1),
-                                                                Orientation.UP);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                                                                Direction.UP);
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[2].x+1, gameManager.players[2].y] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[2].x+1, gameManager.players[2].y),
-                                                                Orientation.RIGHT);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                                                                Direction.RIGHT);
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 if (map[gameManager.players[2].x, gameManager.players[2].y-1] == 0) {
-                    listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                    listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
                                                                 new Vector2(gameManager.players[2].x, gameManager.players[2].y-1),
-                                                                Orientation.DOWN);
-                    if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                        iloscRuchow = listaKrokow.Count;
-                        ruch = listaKrokow[0];
+                                                                Direction.DOWN);
+                    if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                        iloscRuchow = listaKrokow2.Count;
+                        ruch = listaKrokow2[0];
                     }
                 }
                 //jesli nie mozemy uciec od bomby
                 if (iloscRuchow == 100){
-                    ruch = null;
+                    ruch = Action.Wait;
                 }
             break;
 
             case 3:
-                int iloscRuchow = 100;
-                List<Action> listaKrokow;
+                iloscRuchow = 100;
                 List<Vector2> listaBomb = gameManager.GetBombList();
-                ruch = null;
+                 ruch = Action.Wait;
             break;
 
             case 4:
-                int iloscRuchow = 100;
-                List<Action> listaKrokow;
+                iloscRuchow = 100;
                 //lewo
                 if (map[positionX-1, positionY] == 0) {
                     if( (map[positionX-1, positionY-1] == 10 || map[positionX-1, positionY-1] == 20) || 
                         (map[positionX-2, positionY] == 10 || map[positionX-2, positionY] == 20) ||
                         (map[positionX-1, positionY+1] == 10 || map[positionX-1, positionY+1] == 20) ) {
-                        if (gameManager.players[2].Orientation == Orientation.LEFT) {
+                        if (gameManager.players[2].Orientation == Direction.LEFT) {
+                             Debug.Log("Bombka lewo");
                             gameManager.PlaceBomb(playerIndex);
-                            ruch = null;
+                              ruch = Action.Wait;
                         } else {
-                            listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                     gameManager.players[2].Orientation, 
                                                                     new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Orientation.LEFT);
+                                                                    Direction.LEFT);
 
-                            if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                                iloscRuchow = listaKrokow.Count;
-                                ruch = listaKrokow[0];
+                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                                iloscRuchow = listaKrokow2.Count;
+                                ruch = listaKrokow2[0];
                             }
                         }
                         
@@ -352,18 +355,19 @@ public class MinMaxAi : MonoBehaviour {
                     if( (map[positionX-1, positionY+1] == 10 || map[positionX-1, positionY+1] == 20) || 
                         (map[positionX, positionY+2] == 10 || map[positionX, positionY+2] == 20) ||
                         (map[positionX+1, positionY+1] == 10 || map[positionX+1, positionY+1] == 20) ) {
-                        if (gameManager.players[2].Orientation == Orientation.UP) {
+                        if (gameManager.players[2].Orientation == Direction.UP) {
+                             Debug.Log("Bombka gora");
                             gameManager.PlaceBomb(playerIndex);
-                            ruch = null;
+                             ruch = Action.Wait;
                         } else {
-                            listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                     gameManager.players[2].Orientation, 
                                                                     new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Orientation.UP);
+                                                                    Direction.UP);
 
-                            if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                                iloscRuchow = listaKrokow.Count;
-                                ruch = listaKrokow[0];
+                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                                iloscRuchow = listaKrokow2.Count;
+                                ruch = listaKrokow2[0];
                             }
                         }
                         
@@ -374,18 +378,19 @@ public class MinMaxAi : MonoBehaviour {
                     if( (map[positionX+1, positionY+1] == 10 || map[positionX+1, positionY+1] == 20) || 
                         (map[positionX+2, positionY] == 10 || map[positionX+2, positionY] == 20) ||
                         (map[positionX+1, positionY-1] == 10 || map[positionX+1, positionY-1] == 20) ) {
-                        if (gameManager.players[2].Orientation == Orientation.RIGHT) {
+                        if (gameManager.players[2].Orientation == Direction.RIGHT) {
+                             Debug.Log("Bombka prawo");
                             gameManager.PlaceBomb(playerIndex);
-                            ruch = null;
+                              ruch = Action.Wait;
                         } else {
-                            listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                     gameManager.players[2].Orientation, 
                                                                     new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Orientation.RIGHT);
+                                                                    Direction.RIGHT);
 
-                            if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                                iloscRuchow = listaKrokow.Count;
-                                ruch = listaKrokow[0];
+                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                                iloscRuchow = listaKrokow2.Count;
+                                ruch = listaKrokow2[0];
                             }
                         }
                         
@@ -396,18 +401,19 @@ public class MinMaxAi : MonoBehaviour {
                     if( (map[positionX+1, positionY-1] == 10 || map[positionX+1, positionY-1] == 20) || 
                         (map[positionX, positionY-2] == 10 || map[positionX, positionY-2] == 20) ||
                         (map[positionX-1, positionY-1] == 10 || map[positionX-1, positionY-1] == 20) ) {
-                        if (gameManager.players[2].Orientation == Orientation.RIGHT) {
+                        if (gameManager.players[2].Orientation == Direction.DOWN) {
+                             Debug.Log("Bombka dol");
                             gameManager.PlaceBomb(playerIndex);
-                            ruch = null;
+                          ruch = Action.Wait;
                         } else {
-                            listaKrokow = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
+                            listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                     gameManager.players[2].Orientation, 
                                                                     new Vector2(gameManager.players[2].x, gameManager.players[2].y),
-                                                                    Orientation.RIGHT);
+                                                                    Direction.DOWN);
 
-                            if  (listaKrokow != null && iloscRuchow > listaKrokow.Count) {
-                                iloscRuchow = listaKrokow.Count;
-                                ruch = listaKrokow[0];
+                            if  (listaKrokow2 != null && iloscRuchow > listaKrokow2.Count) {
+                                iloscRuchow = listaKrokow2.Count;
+                                ruch = listaKrokow2[0];
                             }
                         }
                         
@@ -417,25 +423,30 @@ public class MinMaxAi : MonoBehaviour {
         }
 
         switch(ruch){
-            case null:
+            case Action.Wait:
+             Debug.Log("Czekam");
                 return -1;
             break;
 
             case Action.MoveForward:
                 gameManager.MoveForward(playerIndex);
+                Debug.Log("MoveForward");
                 return -1;
             break;
 
             case Action.RotateClockwise:
                 gameManager.RotateClockwise(playerIndex);
+                 Debug.Log("Obrot prawo");
                 return -1;
             break;
 
             case Action.RotateCounterClockwise:
                 gameManager.RotateCounterClockwise(playerIndex);
+                 Debug.Log("Obrot lewo");
                 return -1;
             break;
         }
+        return -1;
     }
 	
 	// Update is called once per frame
@@ -462,12 +473,16 @@ public class MinMaxAi : MonoBehaviour {
             
             int tmp = 1;
             int licznik = 4;
-            while(tmp) {
+            while(tmp > 0) {
                 int wartosc = listaPriorytetowIndex[licznik];
                 for (int i=0; i<listaPriorytetow.Length; i++) {
-                    listaPriorytetow[i] == wartosc;
-                    tmp = Move(i);
-                    break;
+                    if(listaPriorytetow[i] == wartosc){
+                        tmp = Move(i);
+                        Debug.Log("i = " + i.ToString());
+                        Debug.Log("wartosc = " + wartosc.ToString());
+                        break;
+                    }
+                    
                 }
                 licznik--;
             }
