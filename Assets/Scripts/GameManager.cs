@@ -878,7 +878,7 @@ public class GameManager : MonoBehaviour {
 					children.Add(new_node);
 				break;
 			}
-			if(map[(int)node_position.x, (int)node_position.y] == 0){
+	if(map[(int)node_position.x, (int)node_position.y] == 0){
 				new_node = new Node(current_node, node_position, current_node.orientation);
 				children.Add(new_node);
 			} else if(map[(int)node_position.x, (int)node_position.y] == 6){
