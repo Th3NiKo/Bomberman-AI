@@ -154,7 +154,7 @@ public class GameManager : MonoBehaviour {
 	private int oneHealth = 3;
 	private int twoHealth = 3;
 	private int threeHealth = 3;
-	List<Action> listaKrokow ;
+	List<Action> listaKrokow;
 
 	public List<Player> players;
 	bool once = true;
@@ -164,9 +164,9 @@ public class GameManager : MonoBehaviour {
 		map = new int [rowsCount, columnsCount];
 		createMap(howMany);
 		renderMap();
-		/* ASTAR SHOWCASE
+
 		listaKrokow	= aStar(startPoint,players[0].Orientation, endPoint, Direction.DOWN);
-		*/
+		
 		
 	}
 	
@@ -196,7 +196,7 @@ public class GameManager : MonoBehaviour {
 			oneMoved = false;
 			twoMoved = false;
 			threeMoved = false;
-			/* ASTAR SHOWCASE
+
 			if(listaKrokow != null && counterMain < listaKrokow.Count){
 				if(listaKrokow[counterMain] == Action.MoveForward){
 					MoveForward(10);
@@ -206,10 +206,10 @@ public class GameManager : MonoBehaviour {
 					RotateCounterClockwise(10);
 				}
 			}
-			counterMain++;*/
+			counterMain++;
 		}
 		
-		/* ASTAR SHOWCASE
+
 		if(once == true){
 			if(listaKrokow != null){
 				for(int i = 0; i < listaKrokow.Count; i++){
@@ -219,7 +219,7 @@ public class GameManager : MonoBehaviour {
 				}
 			}
 			once = false;
-		} */
+		} 
 	}
 
 
