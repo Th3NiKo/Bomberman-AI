@@ -31,7 +31,7 @@ public class BotRandom : MonoBehaviour {
 				if(gameManager.CanMoveForward(playerIndex)){
 					gameManager.MoveForward(playerIndex);
 				} else {
-					randomValue = Random.Range(1,2);
+					randomValue = Random.Range(1,3);
 					if(randomValue == 1){
 						gameManager.RotateClockwise(playerIndex);
 					} else {
@@ -42,7 +42,7 @@ public class BotRandom : MonoBehaviour {
 				if(gameManager.CanMoveForward(playerIndex)){
 					gameManager.PlaceBomb(playerIndex);
 				} else {
-					randomValue = Random.Range(1,2);
+					randomValue = Random.Range(1,3);
 					if(randomValue == 1){
 						gameManager.RotateClockwise(playerIndex);
 					} else {

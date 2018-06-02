@@ -88,7 +88,7 @@ public class Node {
 
 public enum Direction {DOWN, LEFT, RIGHT, UP};
 
-public enum Action {RotateClockwise, RotateCounterClockwise, MoveForward, Wait}
+public enum Action {RotateClockwise, RotateCounterClockwise, MoveForward, Wait, PlaceBomb}
 
 public class Player{
 	public Direction Orientation;
@@ -98,6 +98,8 @@ public class Player{
 	public int health;
 
 	public int bombState;
+	
+	public Action lastAction;
 
 	public Player(Direction o, int _x, int _y){
 		Orientation = 0;
@@ -105,6 +107,7 @@ public class Player{
 		y = _y;
 		bombState = 0;
 		health = 3;
+		lastAction = Action.Wait;
 	}
 
 };
@@ -138,7 +141,7 @@ public class GameManager : MonoBehaviour {
 	public int howMany = 15;
 	private int[,] map;
 	private float turnTimer = 0.0f;
-	private float turnTime = 0.5f;
+	private float turnTime = 0.02f;
 
 	//Guards
 	private bool oneMoved = false;
@@ -165,7 +168,7 @@ public class GameManager : MonoBehaviour {
 		createMap(howMany);
 		renderMap();
 
-		listaKrokow	= aStar(startPoint,players[0].Orientation, endPoint, Direction.LEFT);
+		listaKrokow	= aStar(startPoint,players[0].Orientation, endPoint, Direction.DOWN);
 		
 		
 	}
@@ -176,16 +179,16 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		turnTimer += Time.deltaTime;
 		//Keyboard input for tests
-		if(Input.GetKey(KeyCode.UpArrow)){
-			MoveForward(10);
-		} else if(Input.GetKeyDown(KeyCode.LeftArrow)){
-			//MoveLeft(10);
-			RotateCounterClockwise(10);
-		} else if(Input.GetKeyDown(KeyCode.RightArrow)){
-			RotateClockwise(10);
-		} else if(Input.GetKeyDown(KeyCode.Space)){
+		/* *
+		if(Input.GetKey(KeyCode.LeftArrow)){
+RotateCounterClockwise(10);
+		} else if(Input.GetKey(KeyCode.RightArrow)){			RotateClockwise(10);} 
+		else if(Input.GetKey(KeyCode.Space)){
 			PlaceBomb(10);
-		}
+		} else if(Input.GetKey(KeyCode.UpArrow)){
+			MoveForward(10);
+		}*/
+		
 
 		
 		if(turnTimer >= turnTime){
@@ -199,11 +202,11 @@ public class GameManager : MonoBehaviour {
 
 			if(listaKrokow != null && counterMain < listaKrokow.Count){
 				if(listaKrokow[counterMain] == Action.MoveForward){
-					MoveForward(10);
+					//MoveForward(10);
 				} else if (listaKrokow[counterMain] == Action.RotateClockwise){
-					RotateClockwise(10);
+					//RotateClockwise(10);
 				} else {
-					RotateCounterClockwise(10);
+					//RotateCounterClockwise(10);
 				}
 			}
 			counterMain++;
@@ -431,7 +434,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void RotateClockwise(int playerIndex){
+		
 		if(canMove(playerIndex)){
+			players[(playerIndex / 10) - 1].lastAction = Action.RotateClockwise;
 			int index = (playerIndex / 10) - 1;
 			
 			switch(players[index].Orientation){
@@ -453,7 +458,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void RotateCounterClockwise(int playerIndex){
+		
 		if(canMove(playerIndex)){
+			players[(playerIndex / 10) - 1].lastAction = Action.RotateCounterClockwise;
 			int index = (playerIndex / 10 - 1);
 			switch(players[index].Orientation){
 				case Direction.UP:
@@ -543,54 +550,61 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void PlaceBomb(int playerIndex){
+	
 		if(CheckHp(playerIndex) > 0){
-			int index = (playerIndex / 10) - 1;
-			int _x = players[index].x;
-			int _y = players[index].y;
-			Direction temp = players[index].Orientation;
-			if(!isBombPlaced(playerIndex)){ //If player doesnt have bomb on a map
-			
-				//Is place empty for bomb
-				int bombX = _x;
-				int bombY = _y;
-				switch(temp){
-					case Direction.DOWN:
-						bombY--;
-					break;
-					case Direction.LEFT:
-						bombX--;
-					break;
-					case Direction.RIGHT:
-						bombX++;
-					break;
-					case Direction.UP:
-						bombY++;
-					break;
+			if(canMove(10)){
+				players[(playerIndex / 10) - 1].lastAction = Action.PlaceBomb;
+				int index = (playerIndex / 10) - 1;
+				int _x = players[index].x;
+				int _y = players[index].y;
+				Direction temp = players[index].Orientation;
+				if(!isBombPlaced(playerIndex)){ //If player doesnt have bomb on a map
+				
+					//Is place empty for bomb
+					int bombX = _x;
+					int bombY = _y;
+					switch(temp){
+						case Direction.DOWN:
+							bombY--;
+						break;
+						case Direction.LEFT:
+							bombX--;
+						break;
+						case Direction.RIGHT:
+							bombX++;
+						break;
+						case Direction.UP:
+							bombY++;
+						break;
+					}
+					if(map[bombX, bombY] == 0){
+						map[bombX,bombY] = 4;
+						players[index].bombState = 4;
+					}
 				}
-				if(map[bombX, bombY] == 0){
-					map[bombX,bombY] = 4;
-					players[index].bombState = 4;
-				}
+				playerMoved(playerIndex);
 			}
-			playerMoved(playerIndex);
 		}
 	}
 
 	public void MoveForward(int playerIndex){
-		int index = (playerIndex / 10) - 1;
-		switch(players[index].Orientation){
-			case Direction.DOWN:
-				MoveDown(playerIndex);
-			break;
-			case Direction.LEFT:
-				MoveLeft(playerIndex);
-			break;
-			case Direction.RIGHT:
-				MoveRight(playerIndex);
-			break;
-			case Direction.UP:
-				MoveUp(playerIndex);
-			break;
+		if(canMove(playerIndex)){
+			players[(playerIndex / 10) - 1].lastAction = Action.MoveForward;
+			int index = (playerIndex / 10) - 1;
+			switch(players[index].Orientation){
+				case Direction.DOWN:
+					MoveDown(playerIndex);
+				break;
+				case Direction.LEFT:
+					MoveLeft(playerIndex);
+				break;
+				case Direction.RIGHT:
+					MoveRight(playerIndex);
+				break;
+				case Direction.UP:
+					MoveUp(playerIndex);
+				break;
+			}
 		}
 	}
 
@@ -766,7 +780,7 @@ public class GameManager : MonoBehaviour {
 		 }
 		 Material tempColor = temp.GetComponent<MeshRenderer>().sharedMaterial;
 		 temp.GetComponent<MeshRenderer>().sharedMaterial = dmg;
-		 yield return new WaitForSeconds(.3f);
+		 yield return new WaitForSeconds(.1f);
 		 temp.GetComponent<MeshRenderer>().sharedMaterial = tempColor;
 
 	}
@@ -890,7 +904,7 @@ public class GameManager : MonoBehaviour {
 					children.Add(new_node);
 				break;
 			}
-			if(map[(int)node_position.x, (int)node_position.y] == 0){
+	if(map[(int)node_position.x, (int)node_position.y] == 0){
 				new_node = new Node(current_node, node_position, current_node.orientation);
 				children.Add(new_node);
 			} else if(map[(int)node_position.x, (int)node_position.y] == 6){

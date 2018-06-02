@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -70,20 +70,20 @@ public class MinMaxAi : MonoBehaviour {
 
         //obok bomby
         /* PO LEWEJ */
-        if (map[positionX-1, positionY] > 1 && map[positionX-1, positionY] < 5) {
-            listaPriorytetow[1] -= 100;
+        if (map[positionX-1, positionY] > 0 && map[positionX-1, positionY] < 5) {
+            listaPriorytetow[1] += 100;
         }
         /* Na GÓRZE */
-        if (map[positionX, positionY+1] > 1 && map[positionX, positionY+1] < 5) {
-            listaPriorytetow[1] -= 100;
+        if (map[positionX, positionY+1] > 0 && map[positionX, positionY+1] < 5) {
+            listaPriorytetow[1] += 100;
         }
         /* PO PRAWEJ */
-        if (map[positionX+1, positionY] > 1 && map[positionX+1, positionY] < 5) {
-            listaPriorytetow[1] -= 100;
+        if (map[positionX+1, positionY] > 0 && map[positionX+1, positionY] < 5) {
+            listaPriorytetow[1] += 100;
         }
         /* NA DOLE */
-        if (map[positionX, positionY-1] > 1 && map[positionX, positionY-1] < 5) {
-            listaPriorytetow[1] -= 100;
+        if (map[positionX, positionY-1] > 0 && map[positionX, positionY-1] < 5) {
+            listaPriorytetow[1] += 100;
         }
 
         //obok przeciwnik
@@ -108,30 +108,30 @@ public class MinMaxAi : MonoBehaviour {
         //puste i obok bomba
         /* PO LEWEJ */
         if (map[positionX-1, positionY] == 0) {
-            if( (map[positionX-1, positionY-1] > 1 && map[positionX-1, positionY-1] < 5) || 
-                (map[positionX-2, positionY] > 1 && map[positionX-2, positionY] < 5) ||
-                (map[positionX-1, positionY+1] > 1 && map[positionX-1, positionY+1] < 5) ) {
-                listaPriorytetow[3] -= 100;
+            if( (map[positionX-1, positionY-1] > 0 && map[positionX-1, positionY-1] < 5) || 
+                (map[positionX-2, positionY] > 0 && map[positionX-2, positionY] < 5) ||
+                (map[positionX-1, positionY+1] > 0 && map[positionX-1, positionY+1] < 5) ) {
+                listaPriorytetow[3] += 100;
             }
         }
         /* Na GÓRZE */
         if (map[positionX, positionY+1] == 0) {
-            if( (map[positionX, positionY+2] > 1 && map[positionX, positionY+2] < 5) || 
-                (map[positionX+1, positionY+1] > 1 && map[positionX+1, positionY+1] < 5) ) {
-                listaPriorytetow[3] -= 100;
+            if( (map[positionX, positionY+2] >0 && map[positionX, positionY+2] < 5) || 
+                (map[positionX+1, positionY+1] > 0 && map[positionX+1, positionY+1] < 5) ) {
+                listaPriorytetow[3] += 100;
             }
         }
         /* PO PRAWEJ */
         if (map[positionX+1, positionY] == 0) {
-            if( (map[positionX+2, positionY] > 1 && map[positionX+2, positionY] < 5) || 
-                (map[positionX+1, positionY-1] > 1 && map[positionX+1, positionY-1] < 5) ) {
-                listaPriorytetow[3] -= 100;
+            if( (map[positionX+2, positionY] > 0 && map[positionX+2, positionY] < 5) || 
+                (map[positionX+1, positionY-1] > 0 && map[positionX+1, positionY-1] < 5) ) {
+                listaPriorytetow[3] += 100;
             }
         }
         /* NA DOLE */
         if (map[positionX, positionY-1] == 0) {
-            if( (map[positionX, positionY-2] > 1 && map[positionX, positionY-2] < 5) ) {
-                listaPriorytetow[3] -= 100;
+            if( (map[positionX, positionY-2] > 0 && map[positionX, positionY-2] < 5) ) {
+                listaPriorytetow[3] += 100;
             }
         }
 
@@ -182,6 +182,7 @@ public class MinMaxAi : MonoBehaviour {
             case 0:
                 iloscRuchow = 100;
                 //gracz 1
+                if(gameManager.players[0].health > 0){
                 if (map[gameManager.players[0].x-1, gameManager.players[0].y] == 0) {
                     listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
@@ -222,7 +223,9 @@ public class MinMaxAi : MonoBehaviour {
                         ruch = listaKrokow2[0];
                     }
                 }
+                }
                 //Gracz 2
+                if(gameManager.players[1].health > 0){
                 if (map[gameManager.players[1].x-1, gameManager.players[1].y] == 0) {
                     listaKrokow2 = gameManager.aStar(new Vector2(gameManager.players[2].x, gameManager.players[2].y), 
                                                                 gameManager.players[2].Orientation, 
@@ -262,6 +265,7 @@ public class MinMaxAi : MonoBehaviour {
                         iloscRuchow = listaKrokow2.Count;
                         ruch = listaKrokow2[0];
                     }
+                }
                 }
                 //jesli nie mamy podejscia to czekamy
                 if (iloscRuchow == 100) {
@@ -350,17 +354,17 @@ public class MinMaxAi : MonoBehaviour {
                             if (gameManager.players[2].Orientation == Direction.UP) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.RIGHT) {
                                 if (iloscRuchow > 2) {
                                     iloscRuchow = 2;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.DOWN) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateClockwise(playerIndex);
+                                    ruch = Action.RotateClockwise;
                                 }
                             }
                         }
@@ -389,17 +393,17 @@ public class MinMaxAi : MonoBehaviour {
                             if (gameManager.players[2].Orientation == Direction.RIGHT) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.DOWN) {
                                 if (iloscRuchow > 2) {
                                     iloscRuchow = 2;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.LEFT) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateClockwise(playerIndex);
+                                    ruch = Action.RotateClockwise;
                                 }
                             }
                         }
@@ -428,17 +432,17 @@ public class MinMaxAi : MonoBehaviour {
                             if (gameManager.players[2].Orientation == Direction.DOWN) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.LEFT) {
                                 if (iloscRuchow > 2) {
                                     iloscRuchow = 2;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.UP) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateClockwise(playerIndex);
+                                    ruch = Action.RotateClockwise;
                                 }
                             }
                         }
@@ -467,17 +471,17 @@ public class MinMaxAi : MonoBehaviour {
                             if (gameManager.players[2].Orientation == Direction.LEFT) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.UP) {
                                 if (iloscRuchow > 2) {
                                     iloscRuchow = 2;
-                                    ruch = Action.RotateCounterClockwise(playerIndex);
+                                    ruch = Action.RotateCounterClockwise;
                                 }
                             } else if (gameManager.players[2].Orientation == Direction.RIGHT) {
                                 if (iloscRuchow > 1) {
                                     iloscRuchow = 1;
-                                    ruch = Action.RotateClockwise(playerIndex);
+                                    ruch = Action.RotateClockwise;
                                 }
                             }
                         }
