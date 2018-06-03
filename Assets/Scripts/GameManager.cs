@@ -140,8 +140,8 @@ public class GameManager : MonoBehaviour {
 
 	public int howMany = 15;
 	private int[,] map;
-	private float turnTimer = 0.0f;
-	private float turnTime = 0.02f;
+	private float turnTimer = 1.0f;
+	private float turnTime = 0.5f;
 
 	//Guards
 	private bool oneMoved = false;
