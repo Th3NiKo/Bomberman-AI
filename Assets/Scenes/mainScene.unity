@@ -306,7 +306,7 @@ MonoBehaviour:
   endPoint: {x: 1, y: 1}
   rowsCount: 11
   columnsCount: 11
-  howMany: 15
+  howMany: 30
 --- !u!4 &1056530390
 Transform:
   m_ObjectHideFlags: 0
