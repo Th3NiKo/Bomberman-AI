@@ -4,24 +4,13 @@ using UnityEngine;
 using System;
 
 // Możliwości: 
-// idź - koszt -1 (woda koszt - 10) (do przeciwnika +5)
-// obrót w lewo - koszt -1
-// obrót w prawo - koszt -1
+// idź 
+// obrót w lewo 
+// obrót w prawo 
 // w/w oblicza a* 
-// czekaj - koszt 0 (bomba -100)
-// postaw bombę - koszt -5 (przy przeciwniku + 20)
+// czekaj - koszt 0 
+// postaw bombę - koszt -5 
 
-// pola:
-// bomba i kratka w lewo, prawo, gora, dół, d = -1000
-// puste
-// przeciwnicy
-// woda
-
-// na poczatku kazdej tury sprawdzic czy jest przejscie do przeciwnikow
-// jesli nie ma, rozwalac klocki do najblizszego
-// jesli jest przescie do jakiegos - atak
-// sprawdzac czy jest bomba 2 kratki dalej
-// jesli jest zawroc, jesli nie atak
 
 public class MinMaxAi : MonoBehaviour
 {
@@ -210,23 +199,51 @@ public class MinMaxAi : MonoBehaviour
                 Debug.Log(gameManager.players[1].Orientation);
                 if (map[positionX, positionY + 1] == 0)
                 {
-                    if ((map[positionX - 1, positionY + 1] == 20 && gameManager.players[1].Orientation == Direction.RIGHT)
-                    || (map[positionX - 1, positionY + 1] == 10 && gameManager.players[0].Orientation == Direction.RIGHT))
+                    if (map[positionX - 1,positionY + 2] == 0)
                     {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba UP bo player left");
+                        if ((map[positionX - 2, positionY + 2] == 20 && gameManager.players[1].Orientation == Direction.RIGHT)
+                        || (map[positionX - 2, positionY + 2] == 10 && gameManager.players[0].Orientation == Direction.RIGHT))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba UP bo player left");
+                        }
+                        if ((map[positionX - 1, positionY + 1] == 20 && gameManager.players[1].Orientation == Direction.UP)
+                        || (map[positionX - 1, positionY + 1] == 10 && gameManager.players[0].Orientation == Direction.UP))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba UP bo player up");
+                        }
+                        if ((map[positionX - 1, positionY + 3] == 20 && gameManager.players[1].Orientation == Direction.DOWN)
+                        || (map[positionX - 1, positionY + 3] == 10 && gameManager.players[0].Orientation == Direction.DOWN))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba UP bo player right");
+                        }
                     }
-                    if ((map[positionX, positionY + 2] == 20 && gameManager.players[1].Orientation == Direction.DOWN)
-                    || (map[positionX, positionY + 2] == 10 && gameManager.players[0].Orientation == Direction.DOWN))
+                    if (map[positionX,positionY + 2] == 0)
                     {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba UP bo player up");
+                        if ((map[positionX - 1, positionY + 2] == 20 && gameManager.players[1].Orientation == Direction.RIGHT)
+                        || (map[positionX - 1, positionY + 2] == 10 && gameManager.players[0].Orientation == Direction.RIGHT))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba UP bo player left");
+                        }
+                        if ((map[positionX, positionY + 3] == 20 && gameManager.players[1].Orientation == Direction.DOWN)
+                        || (map[positionX, positionY + 3] == 10 && gameManager.players[0].Orientation == Direction.DOWN))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba UP bo player up");
+                        }
+                        if ((map[positionX + 1, positionY + 2] == 20 && gameManager.players[1].Orientation == Direction.LEFT)
+                        || (map[positionX + 1, positionY + 2] == 10 && gameManager.players[0].Orientation == Direction.LEFT))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba UP bo player right");
+                        }
                     }
-                    if ((map[positionX + 1, positionY + 1] == 20 && gameManager.players[1].Orientation == Direction.LEFT)
-                    || (map[positionX + 1, positionY + 1] == 10 && gameManager.players[0].Orientation == Direction.LEFT))
+                    if (map[positionX + 1,positionY + 2] == 0)
                     {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba UP bo player right");
+                        
                     }
                 }
                 break;
@@ -236,23 +253,26 @@ public class MinMaxAi : MonoBehaviour
                 Debug.Log(gameManager.players[1].Orientation);
                 if (map[positionX + 1, positionY] == 0)
                 {
-                    if ((map[positionX + 1, positionY + 1] == 20 && gameManager.players[1].Orientation == Direction.DOWN)
-                    || (map[positionX + 1, positionY + 1] == 10 && gameManager.players[0].Orientation == Direction.DOWN))
+                    if (map[positionX + 2, positionY] == 0)
                     {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba RIGHT bo player up");
-                    }
-                    if ((map[positionX + 2, positionY] == 20 && gameManager.players[1].Orientation == Direction.LEFT)
-                    || (map[positionX + 2, positionY] == 10 && gameManager.players[0].Orientation == Direction.LEFT))
-                    {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba RIGHT bo player right");
-                    }
-                    if ((map[positionX + 1, positionY - 1] == 20 && gameManager.players[1].Orientation == Direction.UP)
-                    || (map[positionX + 1, positionY - 1] == 10 && gameManager.players[0].Orientation == Direction.UP))
-                    {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba RIGHT bo player down");
+                        if ((map[positionX + 2, positionY + 1] == 20 && gameManager.players[1].Orientation == Direction.DOWN)
+                        || (map[positionX + 2, positionY + 1] == 10 && gameManager.players[0].Orientation == Direction.DOWN))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba RIGHT bo player up");
+                        }
+                        if ((map[positionX + 3, positionY] == 20 && gameManager.players[1].Orientation == Direction.LEFT)
+                        || (map[positionX + 3, positionY] == 10 && gameManager.players[0].Orientation == Direction.LEFT))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba RIGHT bo player right");
+                        }
+                        if ((map[positionX + 2, positionY - 1] == 20 && gameManager.players[1].Orientation == Direction.UP)
+                        || (map[positionX + 2, positionY - 1] == 10 && gameManager.players[0].Orientation == Direction.UP))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba RIGHT bo player down");
+                        }
                     }
                 }
                 break;
@@ -262,23 +282,26 @@ public class MinMaxAi : MonoBehaviour
                 Debug.Log(gameManager.players[1].Orientation);
                 if (map[positionX, positionY - 1] == 0)
                 {
-                    if ((map[positionX + 1, positionY - 1] == 20 && gameManager.players[1].Orientation == Direction.LEFT)
-                    || (map[positionX + 1, positionY - 1] == 10 && gameManager.players[0].Orientation == Direction.LEFT))
+                    if (map[positionX, positionY - 2] == 0)
                     {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba DWON bo player right");
-                    }
-                    if ((map[positionX, positionY - 2] == 20 && gameManager.players[1].Orientation == Direction.UP)
-                    || (map[positionX, positionY - 2] == 10 && gameManager.players[0].Orientation == Direction.UP))
-                    {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba DWON bo player down");
-                    }
-                    if ((map[positionX - 1, positionY - 1] == 20 && gameManager.players[1].Orientation == Direction.RIGHT)
-                    || (map[positionX - 1, positionY - 1] == 10 && gameManager.players[0].Orientation == Direction.RIGHT))
-                    {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba DWON bo player left");
+                        if ((map[positionX + 1, positionY - 2] == 20 && gameManager.players[1].Orientation == Direction.LEFT)
+                        || (map[positionX + 1, positionY - 2] == 10 && gameManager.players[0].Orientation == Direction.LEFT))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba DWON bo player right");
+                        }
+                        if ((map[positionX, positionY - 3] == 20 && gameManager.players[1].Orientation == Direction.UP)
+                        || (map[positionX, positionY - 3] == 10 && gameManager.players[0].Orientation == Direction.UP))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba DWON bo player down");
+                        }
+                        if ((map[positionX - 1, positionY - 2] == 20 && gameManager.players[1].Orientation == Direction.RIGHT)
+                        || (map[positionX - 1, positionY - 2] == 10 && gameManager.players[0].Orientation == Direction.RIGHT))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba DWON bo player left");
+                        }
                     }
                 }
                 break;
@@ -288,23 +311,26 @@ public class MinMaxAi : MonoBehaviour
                 Debug.Log(gameManager.players[1].Orientation);
                 if (map[positionX - 1, positionY] == 0)
                 {
-                    if ((map[positionX - 1, positionY + 1] == 20 && gameManager.players[1].Orientation == Direction.DOWN)
-                    || (map[positionX - 1, positionY + 1] == 10 && gameManager.players[0].Orientation == Direction.DOWN))
+                    if (map[positionX - 2, positionY] == 0)
                     {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba LEFT bo player up");
-                    }
-                    if ((map[positionX - 2, positionY] == 20 && gameManager.players[1].Orientation == Direction.RIGHT)
-                    || (map[positionX - 2, positionY] == 10 && gameManager.players[0].Orientation == Direction.RIGHT))
-                    {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba LEFT bo player left");
-                    }
-                    if ((map[positionX - 1, positionY - 1] == 20 && gameManager.players[1].Orientation == Direction.UP)
-                    || (map[positionX - 1, positionY - 1] == 10 && gameManager.players[0].Orientation == Direction.UP))
-                    {
-                        listaPriorytetow[5] += 50;
-                        Debug.Log("bomba LEFT bo player down");
+                        if ((map[positionX - 2, positionY + 1] == 20 && gameManager.players[1].Orientation == Direction.DOWN)
+                        || (map[positionX - 2, positionY + 1] == 10 && gameManager.players[0].Orientation == Direction.DOWN))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba LEFT bo player up");
+                        }
+                        if ((map[positionX - 3, positionY] == 20 && gameManager.players[1].Orientation == Direction.RIGHT)
+                        || (map[positionX - 3, positionY] == 10 && gameManager.players[0].Orientation == Direction.RIGHT))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba LEFT bo player left");
+                        }
+                        if ((map[positionX - 2, positionY - 1] == 20 && gameManager.players[1].Orientation == Direction.UP)
+                        || (map[positionX - 2, positionY - 1] == 10 && gameManager.players[0].Orientation == Direction.UP))
+                        {
+                            listaPriorytetow[5] += 50;
+                            Debug.Log("bomba LEFT bo player down");
+                        }
                     }
                 }
                 break;
@@ -924,7 +950,6 @@ public class MinMaxAi : MonoBehaviour
                 }
                 break;
             case 5:
-                Debug.Log("bomba - direction");
                 gameManager.PlaceBomb(playerIndex);
                 ruch = Action.Wait;
                 break;
