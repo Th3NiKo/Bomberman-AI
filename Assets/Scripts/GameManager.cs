@@ -98,16 +98,23 @@ public class Player{
 	public int health;
 
 	public int bombState;
+	public Vector2 bombPosition;
+	
+	public int killedPlayer;
+	public bool killedWall;
 	
 	public Action lastAction;
 
 	public Player(Direction o, int _x, int _y){
-		Orientation = 0;
+		bombPosition = new Vector2(-1,-1);
+		Orientation = o;
 		x = _x;
 		y = _y;
 		bombState = 0;
 		health = 3;
 		lastAction = Action.Wait;
+		killedPlayer = -1;
+		killedWall = false;
 	}
 
 };
@@ -140,8 +147,8 @@ public class GameManager : MonoBehaviour {
 
 	public int howMany = 15;
 	private int[,] map;
-	private float turnTimer = 1.0f;
-	private float turnTime = 0.5f;
+	private float turnTimer = 0.0f;
+	private float turnTime = 0.1f;
 
 	//Guards
 	private bool oneMoved = false;
@@ -179,15 +186,15 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		turnTimer += Time.deltaTime;
 		//Keyboard input for tests
-		/* *
+		
 		if(Input.GetKey(KeyCode.LeftArrow)){
-RotateCounterClockwise(10);
-		} else if(Input.GetKey(KeyCode.RightArrow)){			RotateClockwise(10);} 
-		else if(Input.GetKey(KeyCode.Space)){
-			PlaceBomb(10);
-		} else if(Input.GetKey(KeyCode.UpArrow)){
-			MoveForward(10);
-		}*/
+RotateCounterClockwise(30);
+		} if(Input.GetKey(KeyCode.RightArrow)){			RotateClockwise(30);} 
+		if(Input.GetKey(KeyCode.Space)){
+			PlaceBomb(30);
+		} if(Input.GetKey(KeyCode.UpArrow)){
+			MoveForward(30);
+		}
 		
 
 		
@@ -216,8 +223,8 @@ RotateCounterClockwise(10);
 		if(once == true){
 			if(listaKrokow != null){
 				for(int i = 0; i < listaKrokow.Count; i++){
-					Debug.Log(listaKrokow[i].ToString());
-					//Debug.Log("Znajduje tam sie: " + map[(int)listaKrokow[i].x, (int)listaKrokow[i].y]);
+					//Debug.log(listaKrokow[i].ToString());
+					////Debug.log("Znajduje tam sie: " + map[(int)listaKrokow[i].x, (int)listaKrokow[i].y]);
 					//Instantiate(Marker, new Vector3(listaKrokow[i].x, 1.1f, listaKrokow[i].y), Quaternion.identity);
 				}
 			}
@@ -226,7 +233,7 @@ RotateCounterClockwise(10);
 	}
 
 
-	void createMap(int howManyBreakable){
+	public void createMap(int howManyBreakable){
 		//Set camera position so we will see everything
 		//Doing some triangles calculations to get high of camera (Pitagoras etc)
 		float basis = Mathf.Sqrt(Mathf.Pow(((rowsCount - 1) / 2),2) + Mathf.Pow(((rowsCount - 1) / 2),2));
@@ -255,9 +262,10 @@ RotateCounterClockwise(10);
 		map[1,1] = 10;
 		map[1,columnsCount - 2] = 20;
 		map[rowsCount - 2, 1] = 30;
+
 		Player p1 = new Player(Direction.RIGHT, 1,1);
-		Player p2 = new Player(Direction.LEFT, 1,columnsCount - 2);
-		Player p3 = new Player(Direction.DOWN, rowsCount - 2,1);
+		Player p2 = new Player(Direction.DOWN, 1,columnsCount - 2);
+		Player p3 = new Player(Direction.LEFT, rowsCount - 2,1);
 		players.Add(p1); //10
 		players.Add(p2); //20
 		players.Add(p3); //30
@@ -305,7 +313,7 @@ RotateCounterClockwise(10);
 	void renderMap(){
 		
 		//We need to start from some points of the map and draw every element
-		//Debug.Log(oneBomb);
+		////Debug.log(oneBomb);
 		float startX = 0.0f;
 		float startY = 0.0f;
 		
@@ -362,17 +370,35 @@ RotateCounterClockwise(10);
 					break;
 					case 1:
 						//Blowing terrain
+						int bombOfPlayer = whosBombItIs(i,j);
+						////Debug.log("PLayer numer" + bombOfPlayer + " bomb blowed");
 						
 						if(map[i-1,j] == 0 || map[i-1,j] == 8){
+							if(map[i-1,j] == 8){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedWall = true;
+							}
 							Instantiate(explosionObject,new Vector3(startX - 1f, 1f, startY), Quaternion.identity);
 							map[i-1,j] = 0;
 						} if (map[i+1,j] == 0 || map[i+1,j] == 8){
+							if(map[i+1,j] == 8){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedWall = true;
+							}
 							Instantiate(explosionObject,new Vector3(startX + 1f, 1f, startY), Quaternion.identity);
 							map[i+1,j] = 0;
 						} if (map[i,j-1] == 0 || map[i,j-1] == 8){
+							if(map[i,j-1] == 8){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedWall = true;
+							}
 							Instantiate(explosionObject,new Vector3(startX, 1f, startY -1f), Quaternion.identity);
 							map[i,j-1] = 0;
 						} if (map[i,j+1] == 0 || map[i,j+1] == 8){
+							if(map[i,j+1] == 8){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedWall = true;
+							}
 							Instantiate(explosionObject,new Vector3(startX, 1f, startY +1f), Quaternion.identity);
 							map[i,j+1] = 0;
 						} 
@@ -389,21 +415,37 @@ RotateCounterClockwise(10);
 							StartCoroutine(changeColor(map[i-1,j]));
 							//Take health down
 							takeHealthDown(map[i-1,j]);
+							if(CheckHp(map[i-1,j]) <= 0){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedPlayer = map[i-1,j];
+							}
 						}if(map[i+1,j] == 10 || map[i+1,j] == 20 ||  map[i+1,j] == 30){
 							//Color red for one second
 							StartCoroutine(changeColor(map[i+1,j]));
 							//Take health down
 							takeHealthDown(map[i+1,j]);
+							if(CheckHp(map[i+1,j]) <= 0){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedPlayer = map[i+1,j];
+							}
 						}if(map[i,j-1] == 10 || map[i,j-1] == 20 ||  map[i,j-1] == 30){
 							//Color red for one second
 							StartCoroutine(changeColor(map[i,j-1]));
 							//Take health down
 							takeHealthDown(map[i,j-1]);
+							if(CheckHp(map[i,j-1]) <= 0){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedPlayer = map[i,j-1];
+							}
 						} if(map[i,j+1] == 10 || map[i,j+1] == 20 ||  map[i,j+1] == 30){
 							//Color red for one second
 							StartCoroutine(changeColor(map[i,j+1]));
 							//Take health down
 							takeHealthDown(map[i,j+1]);
+							if(CheckHp(map[i,j+1]) <= 0){
+								if(bombOfPlayer >= 0)
+								players[bombOfPlayer].killedPlayer = map[i,j+1];
+							}
 						}
 					break;
 
@@ -552,9 +594,9 @@ RotateCounterClockwise(10);
 	public void PlaceBomb(int playerIndex){
 	
 		if(CheckHp(playerIndex) > 0){
-			if(canMove(10)){
+			if(canMove(playerIndex)){
 				players[(playerIndex / 10) - 1].lastAction = Action.PlaceBomb;
-				int index = (playerIndex / 10) - 1;
+				int index = (int)(playerIndex / 10) - 1;
 				int _x = players[index].x;
 				int _y = players[index].y;
 				Direction temp = players[index].Orientation;
@@ -579,6 +621,9 @@ RotateCounterClockwise(10);
 					}
 					if(map[bombX, bombY] == 0){
 						map[bombX,bombY] = 4;
+						players[index].bombPosition.x = bombX;
+						players[index].bombPosition.y = bombY;
+						
 						players[index].bombState = 4;
 					}
 				}
@@ -665,6 +710,61 @@ RotateCounterClockwise(10);
 		return listaBomb;
 	}
 
+	public bool isBlowingNearPlayer(int playerIndex){
+		int index = (playerIndex / 10) - 1;
+		int playerX = players[index].x;
+		int playerY = players[index].y;
+
+		List<Vector2> bombsPositions = GetBombList();
+		for(int i = 0; i < bombsPositions.Count; i++){
+			if(map[(int)bombsPositions[i].x,(int)bombsPositions[i].y] == 2){
+				if((int)bombsPositions[i].x == playerX && (int)bombsPositions[i].y == playerY - 1){
+					return true;
+				} else if((int)bombsPositions[i].x == playerX && (int)bombsPositions[i].y == playerY + 1){
+					return true;
+				} else if((int)bombsPositions[i].x == playerX - 1 && (int)bombsPositions[i].y == playerY){
+					return true;
+				} else if((int)bombsPositions[i].x == playerX + 1 && (int)bombsPositions[i].y == playerY){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public bool isBombNearPlayer(int playerIndex){
+		int index = (playerIndex / 10) - 1;
+		int playerX = players[index].x;
+		int playerY = players[index].y;
+
+		List<Vector2> bombsPositions = GetBombList();
+		for(int i = 0; i < bombsPositions.Count; i++){
+			if(map[(int)bombsPositions[i].x,(int)bombsPositions[i].y] >= 1 && map[(int)bombsPositions[i].x,(int)bombsPositions[i].y] < 6){
+				if((int)bombsPositions[i].x == playerX && (int)bombsPositions[i].y == playerY - 1){
+					return true;
+				} else if((int)bombsPositions[i].x == playerX && (int)bombsPositions[i].y == playerY + 1){
+					return true;
+				} else if((int)bombsPositions[i].x == playerX - 1 && (int)bombsPositions[i].y == playerY){
+					return true;
+				} else if((int)bombsPositions[i].x == playerX + 1 && (int)bombsPositions[i].y == playerY){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public int whosBombItIs(int x, int y){ //zwraca indeks
+		for(int i = 0; i < 3; i++){
+			if(players[i].bombPosition.x == x && players[i].bombPosition.y == y){
+				return i;
+			}
+		} 
+		return -1;
+	}
+
+
+
 	//Guards functions
 	private bool canMove(int playerIndex){ //Can player move?
 		if(playerIndex == 10){
@@ -700,7 +800,7 @@ RotateCounterClockwise(10);
 					gameWonBy = (i + 1) * 10;
 				}
 			}
-			Debug.Log("Koniec parti");
+			//Debug.log("Koniec parti");
 		}
 	}
 
@@ -737,7 +837,7 @@ RotateCounterClockwise(10);
 	}
 
 	private bool isBombPlaced(int playerIndex){ //Is player bomb placed already?
-		if(players[(playerIndex / 10) - 1].bombState == 0){
+		if(players[(int)(playerIndex / 10) - 1].bombState <= 0){
 			return false;
 		} else {
 			return true;
@@ -904,7 +1004,7 @@ RotateCounterClockwise(10);
 					children.Add(new_node);
 				break;
 			}
-	if(map[(int)node_position.x, (int)node_position.y] == 0){
+			if(map[(int)node_position.x, (int)node_position.y] == 0){
 				new_node = new Node(current_node, node_position, current_node.orientation);
 				children.Add(new_node);
 			} else if(map[(int)node_position.x, (int)node_position.y] == 6){
@@ -963,9 +1063,61 @@ RotateCounterClockwise(10);
 		}
 		return null;
 		} else {
-			Debug.LogWarning("U cant move there...");
+			//Debug.logWarning("U cant move there...");
 		}
 		return null;
 
 	}
+
+
+		public void ShowError(int akcja){
+			if(gameWonBy <= -2)
+				Debug.Log("ERR" + akcja.ToString());
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		public void ShowErrors(int akcja){
+		if(isBombNearPlayer(10)){
+			Debug.Log("BOMB");
+			if(CanMoveForward(10)){
+				MoveForward(10);
+			} else {
+				RotateClockwise(10);
+			}
+		} else {
+			if(akcja == 0 || akcja == 3){
+				if(!CanMoveForward(10)){
+					int random = Random.Range(0,2);
+					if(random == 0){
+						RotateClockwise(10);
+					} else {
+						RotateCounterClockwise(10);
+					}
+				}
+			} 
+		}
+	}
+
 }
