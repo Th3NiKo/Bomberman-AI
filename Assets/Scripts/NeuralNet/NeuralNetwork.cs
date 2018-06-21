@@ -238,7 +238,7 @@ public class NeuralNetwork
     /// Save actual weights
     /// </summary>
 	public void SaveWeights(){
-		StreamWriter sw = new StreamWriter("C:\\Users\\Th3NiKo\\Desktop\\wagi.txt");
+		StreamWriter sw = new StreamWriter("C:\\Users\\Th3NiKo\\Desktop\\wagi2.txt");
 		for(int i = 0; i < layers.Length; i++){
 			for(int j = 0; j < layers[i].weights.GetLength(0); j++){
 				for(int q = 0; q < layers[i].weights.GetLength(1); q++){
@@ -253,7 +253,7 @@ public class NeuralNetwork
     /// Load saved weights
     /// </summary>
 	public void LoadWeights(){
-		StreamReader sr = new StreamReader("C:\\Users\\Th3NiKo\\Desktop\\wagi.txt");
+		StreamReader sr = new StreamReader("C:\\Users\\Th3NiKo\\Desktop\\wagi2.txt");
 		for(int i = 0; i < layers.Length; i++){
 			for(int j = 0; j < layers[i].weights.GetLength(0); j++){
 				for(int q = 0; q < layers[i].weights.GetLength(1); q++){

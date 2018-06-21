@@ -23,8 +23,8 @@ public class NeuralUsage : MonoBehaviour {
 		map = gameManager.GetMap();
 		net.LoadWeights();
 		values = new float [5];
-		lastPosition = new Vector2(gameManager.players[index].x,gameManager.players[index].y);
-		lastHp = gameManager.players[index].health;
+//		lastPosition = new Vector2(gameManager.players[index].x,gameManager.players[index].y);
+//		lastHp = gameManager.players[index].health;
 	}
 	
 	
@@ -136,13 +136,14 @@ public class NeuralUsage : MonoBehaviour {
 				break;
 
 			}
+			gameManager.ShowError(maxIndex);
 			}
 			// Learning 
 			
 			if(Train == true){
 			net.FeedForward(FinalMap);
 			float [] values = {0,0,0,0,0};
-			switch(gameManager.players[index].lastAction){
+			switch(gameManager.players[2].lastAction){
 				case Action.MoveForward:
 				values[0]= 1;
 				break;
@@ -160,19 +161,19 @@ public class NeuralUsage : MonoBehaviour {
 				break;
 			}
 		
-			gameManager.players[index].lastAction = Action.Wait;
+			gameManager.players[2].lastAction = Action.Wait;
 			net.BackProp(values);
 			
-			
+			/* 
 			if(gameManager.players[index].health <= 0){
 				Debug.Log(gameManager.GameFinished());
 				net.SaveWeights();
 				Scene loadedLevel = SceneManager.GetActiveScene ();
   				 SceneManager.LoadScene (loadedLevel.buildIndex);
-			}
+			}*/
 			timer = 0;
 			if(gameManager.GameFinished() != -1){
-				Debug.Log(gameManager.GameFinished());
+			
 				net.SaveWeights();
 				
 				 Scene loadedLevel = SceneManager.GetActiveScene ();

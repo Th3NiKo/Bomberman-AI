@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour {
 	public int howMany = 15;
 	private int[,] map;
 	private float turnTimer = 0.0f;
-	private float turnTime = 0.1f;
+	private float turnTime = 0.25f;
 
 	//Guards
 	private bool oneMoved = false;
@@ -655,7 +655,7 @@ RotateCounterClockwise(30);
 
 	public bool CanMoveForward(int playerIndex){
 		int index = (playerIndex / 10) - 1;
-		switch(players[index].Orientation){
+			switch(players[index].Orientation){
 			case Direction.DOWN:
 			if(map[players[index].x,players[index].y-1] == 0 || map[players[index].x,players[index].y-1] == 6){
 				return true;
@@ -880,7 +880,7 @@ RotateCounterClockwise(30);
 		 }
 		 Material tempColor = temp.GetComponent<MeshRenderer>().sharedMaterial;
 		 temp.GetComponent<MeshRenderer>().sharedMaterial = dmg;
-		 yield return new WaitForSeconds(.1f);
+		 yield return new WaitForSeconds(.01f);
 		 temp.GetComponent<MeshRenderer>().sharedMaterial = tempColor;
 
 	}
@@ -1071,8 +1071,24 @@ RotateCounterClockwise(30);
 
 
 		public void ShowError(int akcja){
-			if(gameWonBy <= -2)
-				Debug.Log("ERR" + akcja.ToString());
+			if(isBombNearPlayer(20)){
+			if(CanMoveForward(20)){
+				MoveForward(20);
+			} else {
+				RotateClockwise(20);
+			}
+		} else {
+			if(akcja == 0 || akcja == 3){
+				if(!CanMoveForward(20)){
+					int random = Random.Range(0,2);
+					if(random == 0){
+						RotateClockwise(20);
+					} else {
+						RotateCounterClockwise(20);
+					}
+				}
+			} 
+		}
 		}
 
 
@@ -1100,7 +1116,6 @@ RotateCounterClockwise(30);
 
 		public void ShowErrors(int akcja){
 		if(isBombNearPlayer(10)){
-			Debug.Log("BOMB");
 			if(CanMoveForward(10)){
 				MoveForward(10);
 			} else {

@@ -31,7 +31,7 @@ public class QUsage2 : MonoBehaviour {
 		map = gameManager.GetMap();
 		Ql = new QLearnerScript(5);
 		lastMap = map;
-		lastHp = gameManager.players[index].health;
+//		lastHp = gameManager.players[index].health;
 	}
 
 	static int[] MultiToSingle(int[,] array)

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657868, g: 0.49641263, b: 0.57481706, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -269,6 +269,8 @@ GameObject:
   - component: {fileID: 1056530390}
   - component: {fileID: 1056530389}
   - component: {fileID: 1056530391}
+  - component: {fileID: 1056530392}
+  - component: {fileID: 1056530393}
   m_Layer: 8
   m_Name: GameManager
   m_TagString: GameController
@@ -304,9 +306,9 @@ MonoBehaviour:
   dmg: {fileID: 2100000, guid: 71a4728733717ff4aa76260de297c2b6, type: 2}
   startPoint: {x: 1, y: 1}
   endPoint: {x: 1, y: 1}
-  rowsCount: 11
-  columnsCount: 11
-  howMany: 25
+  rowsCount: 9
+  columnsCount: 9
+  howMany: 5
 --- !u!4 &1056530390
 Transform:
   m_ObjectHideFlags: 0
@@ -332,6 +334,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerIndex: 30
+--- !u!114 &1056530392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1056530388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b94b864e125d634d9af5dfd75bf5330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Train: 1
+--- !u!114 &1056530393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1056530388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1c53ff939f38549b1228cdcb5e6994, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Train: 0
 --- !u!1 &1254619388
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,10 +367,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1254619390}
   - component: {fileID: 1254619389}
-  - component: {fileID: 1254619391}
   - component: {fileID: 1254619392}
   m_Layer: 8
-  m_Name: GameObject
+  m_Name: Boty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -375,24 +400,13 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1254619391
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1254619388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08b3f824de9687840b3695a497ac973f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1254619392
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1254619388}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b7e6e58e619b9948b09ec86dca44474, type: 3}
   m_Name: 
