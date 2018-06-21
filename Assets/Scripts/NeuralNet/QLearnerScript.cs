@@ -179,7 +179,7 @@ using System.Globalization;
         }
 
 		public void SaveWeights(){
-			StreamWriter sw = new StreamWriter("C:\\Users\\Th3NiKo\\Desktop\\wagi.txt");
+			StreamWriter sw = new StreamWriter(@"C:\Users\Kysko\Documents\Nowy folder (2)\Bomberman-AI\wagi.txt");
 			sw.WriteLine(QtStates.Count);
 			for(int i = 0; i < QtStates.Count; i++){
 				sw.WriteLine(QtStates[i].Length);
@@ -199,7 +199,7 @@ using System.Globalization;
 
 
 		public void LoadWeights(){
-			StreamReader sr = new StreamReader("C:\\Users\\Th3NiKo\\Desktop\\wagi.txt");
+			StreamReader sr = new StreamReader(@"C:\Users\Kysko\Documents\Nowy folder (2)\Bomberman-AI\wagi.txt");
 			int QCount = int.Parse(sr.ReadLine(), System.Globalization.CultureInfo.InvariantCulture);
 			for(int i = 0; i < QCount; i++){
 				int Qtemp = int.Parse(sr.ReadLine(), System.Globalization.CultureInfo.InvariantCulture);
